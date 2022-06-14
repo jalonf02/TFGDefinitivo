@@ -2,8 +2,6 @@ from email import header
 from flask import Flask, render_template, url_for, request, redirect, json, jsonify, Blueprint
 from flask_cors import CORS, cross_origin
 import pandas as pd
-from http.server import BaseHTTPRequestHandler, HTTPServer
-from json import dumps
 
 #2 -> IPE 240 - IPE 400 HE 280 A -> HE 300 A 
 def flexCompr(tipoMetal):
@@ -91,6 +89,6 @@ def getResistencias():
         response_object = {'status':'success'}
         response_object['message'] ='Data added!'
         return jsonify(response_object)
-        
+
 if __name__ == '__main__':
     app.run(debug=True)
