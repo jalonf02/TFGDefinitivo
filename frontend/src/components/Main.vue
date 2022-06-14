@@ -1,50 +1,71 @@
 <template>
 <div id="app">
 
- <h3>Calculo de Resistencias</h3>
-    <form @submit="submit">
-  
-    <select v-model="selected.name">
+ <h3>Calculo de resistencias en tipos de acero</h3>
+    <form @submit.prevent="getResistencias">
+    <select v-model="selected.tipo">
       <option disabled value="">Seleccione un elemento</option>
-      <option>IPE 200</option>
-      <option>IPE 400</option>
-      <option>IPE 600</option>
+      <option v-bind:key="tipo" v-for="tipo in excel['Tipos']">
+      {{tipo}}
+      </option>
     </select>
-    
-    <button @click="submit" id="button-1" type="submit" variant="dark">Submit</button>
-     
-  </form>
+    <select id="tipos" v-model="selected.name">
+      <option disabled value="">Seleccione un elemento</option>
+      <option v-bind:key="datos" v-for="datos in excel[selected.tipo]">
+      {{datos}}
+      </option>
+    </select>
+    <button id="button-1" type="submit" variant="dark">Submit</button>
+    </form>
     <p>Valor: {{ selected.name }}</p>
-
+    <p>Resistencia N: {{resistencias["Resistencia N"] }}</p>
+    <p>Resistencia My: {{resistencias["Resistencia My"] }}</p>
+    <p>Resistencia Mz: {{resistencias["Resistencia Mz"] }}</p>
 </div>
 
 </template>
 <script>
-import axios from 'axios';
+import axios from 'axios'
 export default{
- 
-  data(){
+  data () {
     return {
-       selected:{
-        name:"",
+      selected: {
+        name: '',
+        tipo: ''
       },
-    };
+      resistencias: [],
+      excel: {}
+    }
   },
-  methods:{
-    submit:function(){
+  methods: {
+    getResistencias: function () {
       const path = 'http://127.0.0.1:5000/dataentry'
       axios.post(path, {
-        name:this.selected.name,
-        }
+        name: this.selected.name
+      }
       )
-      .then(response => {
-        console.log(response);
-      })
-      .catch(err =>{
-        console.log(err);
-      });
+        .then(body =>
+          this.resistencias = body.data
+        )
+        .catch(err => {
+          console.log(err)
+        })
+      return false
     },
+    getExcel: function () {
+      const path = 'http://127.0.0.1:5000/data'
+      axios.get(path)
+        .then(body => {
+          this.excel = body.data
+        })
+        .catch(err => {
+          console.log(err)
+        })
+      return false
+    }
+  },
+  beforeMount () {
+    this.getExcel()
   }
 }
 </script>
-

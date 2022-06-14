@@ -1,6 +1,9 @@
-from flask import Flask, render_template, url_for, request, redirect, json, jsonify
+from email import header
+from flask import Flask, render_template, url_for, request, redirect, json, jsonify, Blueprint
 from flask_cors import CORS, cross_origin
 import pandas as pd
+from http.server import BaseHTTPRequestHandler, HTTPServer
+from json import dumps
 
 #2 -> IPE 240 - IPE 400 HE 280 A -> HE 300 A 
 def flexCompr(tipoMetal):
@@ -30,16 +33,29 @@ def calcularResMz(fCompr, Welz, Wplz, Fyd):
 
 app = Flask(__name__)
 Cors = CORS(app)
-CORS(app, resources={r'/*': {'origins': '*'}},CORS_SUPPORTS_CREDENTIALS = True)
+CORS(app, resources={r'/*': {'origins': 'http://localhost'}},CORS_SUPPORTS_CREDENTIALS = True)
 app.config['CORS_HEADERS'] = 'Content-Type'
+#CORS_ORIGIN_ALLOW_ALL = True
 
+@cross_origin
+@app.route("/data", methods=['GET'])
+def getExcel():
+    excel = {}
+    with open("Excel2.csv", "r") as f:
+        datos = f.readlines()
+        excel['Tipos'] = list(filter(lambda x: len(x.strip())>0, datos[0].split(";")))
+        i = 1
+        for tipo in excel['Tipos']:
+            excel[tipo] = list(filter(lambda x: len(x.strip())>0, datos[i].split(";")))
+            i = i+1
+    return jsonify(excel)
+@cross_origin
 @app.route("/dataentry", methods=['POST', 'GET'])
-def a():
+def getResistencias():
     if request.method == "POST":
         
         response_object = {'status':'success'}
         post_data = request.get_json()
-        
         tipoAcero = post_data["name"]
 
         print(tipoAcero)
@@ -68,24 +84,13 @@ def a():
 
         print(resN,resMy,resMz)
         response_object['message'] ='Data added!'
-        return jsonify(response_object)
+        return jsonify({'Resistencia N' : resN, 'Resistencia My' : resMy, 'Resistencia Mz' : resMz})
+        #return jsonify(resN)
+    else:
         
-    response_object['message'] ='Data added!'
-    return jsonify(response_object)
-
-@app.route("/datantry", methods=["POST","GET"])
-def submitData():
-    response_object = {'status':'success'}
-    if request.method == "POST":
-        post_data = request.get_json()
-        
-        name = post_data["name"]
-
-        print(name)
-
+        response_object = {'status':'success'}
         response_object['message'] ='Data added!'
         return jsonify(response_object)
-
-
+        
 if __name__ == '__main__':
     app.run(debug=True)
