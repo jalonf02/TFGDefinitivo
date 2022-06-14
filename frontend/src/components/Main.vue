@@ -1,6 +1,5 @@
 <template>
 <div id="app">
-
  <h3>Calculo de resistencias en tipos de acero</h3>
     <form @submit.prevent="getResistencias">
     <select v-model="selected.tipo">
@@ -17,13 +16,19 @@
     </select>
     <button id="button-1" type="submit" variant="dark">Submit</button>
     </form>
+    <p></p>
+    <template>
+      <input v-bind:style="resN < resistencias['Resistencia N'] ? 'color: red':'' "  v-model="resN" placeholder="Resistencia N">
+      <input v-bind:style="resMy < resistencias['Resistencia My'] ? 'color: red':'' " v-model="resMy" placeholder="Resistencia My">
+      <input v-bind:style="resMz < resistencias['Resistencia Mz'] ? 'color: red':'' " v-model="resMz" placeholder="Resistencia Mz">
+    </template>
     <p>Valor: {{ selected.name }}</p>
     <p>Resistencia N: {{resistencias["Resistencia N"] }}</p>
     <p>Resistencia My: {{resistencias["Resistencia My"] }}</p>
     <p>Resistencia Mz: {{resistencias["Resistencia Mz"] }}</p>
 </div>
-
 </template>
+
 <script>
 import axios from 'axios'
 export default{
@@ -44,9 +49,9 @@ export default{
         name: this.selected.name
       }
       )
-        .then(body =>
+        .then(body => {
           this.resistencias = body.data
-        )
+        })
         .catch(err => {
           console.log(err)
         })
