@@ -29,6 +29,16 @@ def calcularResMz(fCompr, Welz, Wplz, Fyd):
     else :
         return Wplz * Fyd / 1000
 
+def calcularFyD(claseAcero, coeficiente):
+    if claseAcero == 'S235':
+        return 235/coeficiente
+    elif claseAcero == 'S275':
+        return 275/coeficiente
+    elif claseAcero == 'S355':
+        return 355/coeficiente
+    else:
+        return 450/coeficiente
+
 app = Flask(__name__)
 Cors = CORS(app)
 CORS(app, resources={r'/*': {'origins': 'http://localhost'}},CORS_SUPPORTS_CREDENTIALS = True)
@@ -47,6 +57,7 @@ def getExcel():
             excel[tipo] = list(filter(lambda x: len(x.strip())>0, datos[i].split(";")))
             i = i+1
     return jsonify(excel)
+    
 @cross_origin
 @app.route("/dataentry", methods=['POST', 'GET'])
 def getResistencias():
@@ -55,9 +66,9 @@ def getResistencias():
         response_object = {'status':'success'}
         post_data = request.get_json()
         tipoAcero = post_data["name"]
-
+        claseAcero = post_data["tipoAcero"]
+        coeficiente = float(post_data["coeficiente"])
         print(tipoAcero)
-
         df = pd.read_excel('Excel.xlsx', header = None,  sheet_name='IPE', skiprows=6, usecols = "B:AP")
 
         is_TipoAcero = df.loc[:, 1] == tipoAcero
@@ -71,7 +82,7 @@ def getResistencias():
         Wplz = df_TipoAcero.iloc[0][26]
         fCompr = flexCompr(tipoAcero)
         #Fyd es constante para todos los tipos de Acero
-        Fyd = 275/1.05
+        Fyd = calcularFyD(claseAcero, coeficiente)
         resN = calcularResN(Fyd, a)
         resMy = calcularResMy(fCompr, Wel, Wpl, Fyd)
         resMz = calcularResMz(fCompr, Welz, Wplz, Fyd)

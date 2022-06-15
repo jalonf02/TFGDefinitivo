@@ -1,12 +1,22 @@
 <template>
-  <div id="app">
-    <router-view/>
-  </div>
+  <v-app>
+    <Navbar>
+    </Navbar>
+    <v-content class="mb-12">
+      <router-view />
+    </v-content>
+    <v-spacer></v-spacer>
+  </v-app>
 </template>
 
 <script>
+import Navbar from './components/Navbar'
 export default {
-  name: 'App'
+  name: 'App',
+
+  components: {
+    Navbar
+  }
 }
 </script>
 

@@ -14,15 +14,28 @@
       {{datos}}
       </option>
     </select>
-    <button id="button-1" type="submit" variant="dark">Submit</button>
+    <select v-model="selected.tipoAcero">
+      <option>S235</option>
+      <option>S275</option>
+      <option>S355</option>
+      <option>S450</option>
+    </select>
+    <select v-model="selected.coeficiente">
+      <option>1</option>
+      <option>1.05</option>
+      <option>1.1</option>
+      <option>1.25</option>
+    </select>
+    <p></p>
+    <input v-bind:style="resN < resistencias['Resistencia N'] ? 'color: red':'' "  v-model="resN" placeholder="Resistencia N">
+    <input v-bind:style="resMy < resistencias['Resistencia My'] ? 'color: red':'' " v-model="resMy" placeholder="Resistencia My">
+    <input v-bind:style="resMz < resistencias['Resistencia Mz'] ? 'color: red':'' " v-model="resMz" placeholder="Resistencia Mz">
+    <p>
+    <button id="button-1" type="submit" variant="dark">Calcular resistencias</button>
+    </p>
     </form>
     <p></p>
-    <template>
-      <input v-bind:style="resN < resistencias['Resistencia N'] ? 'color: red':'' "  v-model="resN" placeholder="Resistencia N">
-      <input v-bind:style="resMy < resistencias['Resistencia My'] ? 'color: red':'' " v-model="resMy" placeholder="Resistencia My">
-      <input v-bind:style="resMz < resistencias['Resistencia Mz'] ? 'color: red':'' " v-model="resMz" placeholder="Resistencia Mz">
-    </template>
-    <p>Valor: {{ selected.name }}</p>
+    <p></p>
     <p>Resistencia N: {{resistencias["Resistencia N"] }}</p>
     <p>Resistencia My: {{resistencias["Resistencia My"] }}</p>
     <p>Resistencia Mz: {{resistencias["Resistencia Mz"] }}</p>
@@ -36,7 +49,9 @@ export default{
     return {
       selected: {
         name: '',
-        tipo: ''
+        tipo: '',
+        coeficiente: '',
+        tipoAcero: ''
       },
       resistencias: [],
       excel: {}
@@ -46,7 +61,9 @@ export default{
     getResistencias: function () {
       const path = 'http://127.0.0.1:5000/dataentry'
       axios.post(path, {
-        name: this.selected.name
+        name: this.selected.name,
+        coeficiente: this.selected.coeficiente,
+        tipoAcero: this.selected.tipoAcero
       }
       )
         .then(body => {
