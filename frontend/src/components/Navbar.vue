@@ -1,58 +1,37 @@
-<<<<<<< HEAD
-  <template>
-    <div class="center examplex">
-      <vs-navbar target-scroll="#padding-scroll-content" padding-scroll center-collapsed v-model="active">
-        <template #left>
-        </template>
-        <template #right>
-        </template>
-      </vs-navbar>
-    </div>
-  </template>
-=======
 <template>
-  <v-card
-    class="mx-auto overflow-hidden"
-    height="400"
-  >
-    <v-app-bar
-      color="deep-purple"
-      dark
-    >
-      <v-app-bar-nav-icon @click="drawer = true"></v-app-bar-nav-icon>
-
-      <v-toolbar-title>Title</v-toolbar-title>
-    </v-app-bar>
-
-    <v-navigation-drawer
-      v-model="drawer"
-      absolute
-      temporary
-    >
-      <v-list
-        nav
-        dense
-      >
-        <v-list-item-group
-          v-model="group"
-          active-class="deep-purple--text text--accent-4"
-        >
-          <v-list-item>
-            <v-list-item-icon>
-              <v-icon>mdi-home</v-icon>
-            </v-list-item-icon>
-            <v-list-item-title>Home</v-list-item-title>
-          </v-list-item>
-
-          <v-list-item>
-            <v-list-item-icon>
-              <v-icon>mdi-account</v-icon>
-            </v-list-item-icon>
-            <v-list-item-title>Account</v-list-item-title>
-          </v-list-item>
-        </v-list-item-group>
-      </v-list>
-    </v-navigation-drawer>
-  </v-card>
+    <div class="navbar">
+        <div class="navLink">
+            <a href="/">Calculo Resistencias</a>
+            <a href="PandeoLateral">Pandeo Lateral</a>
+            <a href="PandeoCompresion">Pandeo de barras a compresión</a>
+        </div>
+    </div>
 </template>
->>>>>>> fc92d65fbf4f8f79471ebd3b2e43a3911cdbfb2c
+<script>
+export default {
+  name: 'Navbar'
+}
+</script>
+<style scoped>
+.navbar{
+    background: grey;
+    padding: 1rem;
+    font-size: 1.5rem;
+    border-bottom: 1px solid white;
+}
+.navLink{
+text-align: center;
+}
+a{
+    text-decoration: none;
+    padding: 1rem;
+    color:#fff;
+    text-align: center;
+}
+@media only screen and (max-width: 600px) {
+    .navLink{
+        display: flex;
+        flex-direction: column;
+    }
+}
+</style>

@@ -3,7 +3,6 @@
     <Navbar>
     </Navbar>
       <router-view />
-    <v-spacer></v-spacer>
   </v-app>
 </template>
 
