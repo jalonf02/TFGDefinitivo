@@ -1,4 +1,5 @@
-from flask import Flask, render_template, url_for, request, redirect, json, jsonify
+from email import header
+from flask import Flask, render_template, url_for, request, redirect, json, jsonify, Blueprint
 from flask_cors import CORS, cross_origin
 import pandas as pd
 
@@ -28,22 +29,46 @@ def calcularResMz(fCompr, Welz, Wplz, Fyd):
     else :
         return Wplz * Fyd / 1000
 
+def calcularFyD(claseAcero, coeficiente):
+    if claseAcero == 'S235':
+        return 235/coeficiente
+    elif claseAcero == 'S275':
+        return 275/coeficiente
+    elif claseAcero == 'S355':
+        return 355/coeficiente
+    else:
+        return 450/coeficiente
+
 app = Flask(__name__)
 Cors = CORS(app)
-CORS(app, resources={r'/*': {'origins': '*'}},CORS_SUPPORTS_CREDENTIALS = True)
+CORS(app, resources={r'/*': {'origins': 'http://localhost'}},CORS_SUPPORTS_CREDENTIALS = True)
 app.config['CORS_HEADERS'] = 'Content-Type'
+#CORS_ORIGIN_ALLOW_ALL = True
 
+@cross_origin
+@app.route("/data", methods=['GET'])
+def getExcel():
+    excel = {}
+    with open("Excel2.csv", "r") as f:
+        datos = f.readlines()
+        excel['Tipos'] = list(filter(lambda x: len(x.strip())>0, datos[0].split(";")))
+        i = 1
+        for tipo in excel['Tipos']:
+            excel[tipo] = list(filter(lambda x: len(x.strip())>0, datos[i].split(";")))
+            i = i+1
+    return jsonify(excel)
+    
+@cross_origin
 @app.route("/dataentry", methods=['POST', 'GET'])
-def a():
+def getResistencias():
     if request.method == "POST":
         
         response_object = {'status':'success'}
         post_data = request.get_json()
-        
         tipoAcero = post_data["name"]
-
+        claseAcero = post_data["tipoAcero"]
+        coeficiente = float(post_data["coeficiente"])
         print(tipoAcero)
-
         df = pd.read_excel('Excel.xlsx', header = None,  sheet_name='IPE', skiprows=6, usecols = "B:AP")
 
         is_TipoAcero = df.loc[:, 1] == tipoAcero
@@ -57,7 +82,7 @@ def a():
         Wplz = df_TipoAcero.iloc[0][26]
         fCompr = flexCompr(tipoAcero)
         #Fyd es constante para todos los tipos de Acero
-        Fyd = 275/1.05
+        Fyd = calcularFyD(claseAcero, coeficiente)
         resN = calcularResN(Fyd, a)
         resMy = calcularResMy(fCompr, Wel, Wpl, Fyd)
         resMz = calcularResMz(fCompr, Welz, Wplz, Fyd)
@@ -68,24 +93,13 @@ def a():
 
         print(resN,resMy,resMz)
         response_object['message'] ='Data added!'
-        return jsonify(response_object)
+        return jsonify({'Resistencia N' : resN, 'Resistencia My' : resMy, 'Resistencia Mz' : resMz})
+        #return jsonify(resN)
+    else:
         
-    response_object['message'] ='Data added!'
-    return jsonify(response_object)
-
-@app.route("/datantry", methods=["POST","GET"])
-def submitData():
-    response_object = {'status':'success'}
-    if request.method == "POST":
-        post_data = request.get_json()
-        
-        name = post_data["name"]
-
-        print(name)
-
+        response_object = {'status':'success'}
         response_object['message'] ='Data added!'
         return jsonify(response_object)
-
 
 if __name__ == '__main__':
     app.run(debug=True)
