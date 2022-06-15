@@ -2,7 +2,13 @@
   <v-app>
     <Navbar>
     </Navbar>
+<<<<<<< HEAD
       <router-view />
+=======
+    <v-content class="mb-12">
+      <router-view />
+    </v-content>
+>>>>>>> fc92d65fbf4f8f79471ebd3b2e43a3911cdbfb2c
     <v-spacer></v-spacer>
   </v-app>
 </template>
@@ -11,6 +17,10 @@
 import Navbar from './components/Navbar'
 export default {
   name: 'App',
+<<<<<<< HEAD
+=======
+
+>>>>>>> fc92d65fbf4f8f79471ebd3b2e43a3911cdbfb2c
   components: {
     Navbar
   }
