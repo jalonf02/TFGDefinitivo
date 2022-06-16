@@ -264,7 +264,7 @@ def getPandeoCompresion():
         is_TipoAcero = df.loc[:, 1] == tipoAce
         df_TipoAcero = df.loc[is_TipoAcero]
 
-        #Extraigo los datos necesarios para calculo del Pandeo Lateral.
+        #Extraigo los datos necesarios para calculo.
         a = df_TipoAcero.iloc[0][8]
         iz = df_TipoAcero.iloc[0][27]
         iy = df_TipoAcero.iloc[0][22]
@@ -293,7 +293,6 @@ def getPandeoCompresion():
         Ncry = (3.1416 / lambday)**2 * a * 21000
         Ncrz = (3.1416 / lambdaz)**2 * a * 21000
 
-        print(xy, xz, resN)
         Nbrdy = resN * xy
         Nbrdz = resN * xz
 
@@ -317,14 +316,324 @@ def getPandeoCompresion():
         interacz = (round(interacz, 2))
 
         response_object['message'] ='Data added!'
-        return jsonify({'Lky' : Lky, 'Lkz' : Lkz, 'lambday' : lambday, 'lambdaz' : lambdaz, 'lamRedY' : lambdaRedy, 
-        'lamRedZ' : lambdaRedz, 'curvaY' : curvaY, 'curvaZ' : curvaZ, 'xy' : xy, 'xz' : xz, 'Ncry' : Ncry , 
-        'Ncrz' : Ncrz, 'Nbdrdy' : Nbrdy, 'Nbdrdz' : Nbrdz, 'interaccion y' : interacy, 'interaccion z' : interacz})
+        return jsonify({'0' : Lky, '1' : Lkz, '2' : lambday, '3' : lambdaz, '4' : lambdaRedy, 
+        '5' : lambdaRedz, '6' : curvaY, '7' : curvaZ, '8' : xy, '9' : xz, '10' : Ncry , 
+        '11' : Ncrz, '12' : Nbrdy, '13' : Nbrdz, '14' : interacy, '15' : interacz})
     else:
         
         response_object = {'status':'success'}
         response_object['message'] ='Data added!'
         return jsonify(response_object)
+
+@cross_origin
+@app.route("/PanCom0", methods=['POST', 'GET'])
+def getPanCom0():
+    if request.method == "POST":        
+        response_object = {'status':'success'}
+        post_data = request.get_json()
+        #Recogemos los valores introducidos por la aplicacion
+        tipoAce = post_data["name"]
+        claseAcero = post_data["tipoAcero"]
+        coeficiente = float(post_data["coeficiente"])       
+        L = float(post_data["L"])
+        By = float(post_data["By"])
+        Bz = float(post_data["Bz"])
+        resNecN = float(post_data["resNecN"])
+
+
+        Lky = L * By * 1000
+        Lkz = L * Bz * 1000
+
+        
+
+        texto = "Esto es un texto de prueba.\n Prueba"
+        return jsonify({'texto' : texto, 'resultado0' : Lky, 'resultado01' : "Lky : ",  'resultado1' : Lkz, 'resultado11' : "Lkz : " })
+    else:
+        
+        response_object = {'status':'success'}
+        response_object['message'] ='Data added!'
+        return jsonify(response_object)
+
+@cross_origin
+@app.route("/PanCom1", methods=['POST', 'GET'])
+def getPanCom1():
+    if request.method == "POST":        
+        response_object = {'status':'success'}
+        post_data = request.get_json()
+        #Recogemos los valores introducidos por la aplicacion
+        tipoAce = post_data["name"]
+        claseAcero = post_data["tipoAcero"]
+        coeficiente = float(post_data["coeficiente"])       
+        L = float(post_data["L"])
+        By = float(post_data["By"])
+        Bz = float(post_data["Bz"])
+        resNecN = float(post_data["resNecN"])
+
+        df = pd.read_excel('Excel.xlsx', header = None,  sheet_name='IPE', skiprows=6, usecols = "B:AP")
+        is_TipoAcero = df.loc[:, 1] == tipoAce
+        df_TipoAcero = df.loc[is_TipoAcero]
+
+        Lky = L * By * 1000
+        Lkz = L * Bz * 1000
+
+        #Extraigo los datos necesarios para calculo.
+        iz = df_TipoAcero.iloc[0][27]
+        iy = df_TipoAcero.iloc[0][22]
+
+        lambday = Lky / (iy * 10)
+        lambdaz = Lkz / (iz * 10)
+
+        lambday = (round(lambday, 1))
+        lambdaz = (round(lambdaz, 1))
+
+        texto = "Esto es un texto de prueba."
+        return jsonify({'texto' : texto, 'resultado0' : lambday, 'resultado01' : "λmecy : ",  'resultado1' : lambdaz, 'resultado11' : "λmecz : " })
+    else:
+        
+        response_object = {'status':'success'}
+        response_object['message'] ='Data added!'
+        return jsonify(response_object)
+
+@cross_origin
+@app.route("/PanCom2", methods=['POST', 'GET'])
+def getPanCom2():
+    if request.method == "POST":        
+        response_object = {'status':'success'}
+        post_data = request.get_json()
+        #Recogemos los valores introducidos por la aplicacion
+        tipoAce = post_data["name"]
+        claseAcero = post_data["tipoAcero"]
+        coeficiente = float(post_data["coeficiente"])       
+        L = float(post_data["L"])
+        By = float(post_data["By"])
+        Bz = float(post_data["Bz"])
+        resNecN = float(post_data["resNecN"])
+
+        df = pd.read_excel('Excel.xlsx', header = None,  sheet_name='IPE', skiprows=6, usecols = "B:AP")
+        is_TipoAcero = df.loc[:, 1] == tipoAce
+        df_TipoAcero = df.loc[is_TipoAcero]
+
+        Lky = L * By * 1000
+        Lkz = L * Bz * 1000
+
+        #Extraigo los datos necesarios para calculo.
+        iz = df_TipoAcero.iloc[0][27]
+        iy = df_TipoAcero.iloc[0][22]
+
+        lambday = Lky / (iy * 10)
+        lambdaz = Lkz / (iz * 10)
+
+        esbLim = calcularEsbLim(claseAcero)
+
+        lambdaRedy = lambday / esbLim
+        lambdaRedz = lambdaz / esbLim
+
+        lambdaRedy = (round(lambdaRedy, 2))
+        lambdaRedz = (round(lambdaRedz, 2))
+
+        texto = "Esto es un texto de prueba."
+        return jsonify({'texto' : texto, 'resultado0' : lambdaRedy, 'resultado01' : "λredy : ",  'resultado1' : lambdaRedz, 'resultado11' : "λredz : " })
+    else:
+        
+        response_object = {'status':'success'}
+        response_object['message'] ='Data added!'
+        return jsonify(response_object)
+
+@cross_origin
+@app.route("/PanCom3", methods=['POST', 'GET'])
+def getPanCom3():
+    if request.method == "POST":        
+        response_object = {'status':'success'}
+        post_data = request.get_json()
+        #Recogemos los valores introducidos por la aplicacion
+        tipoAce = post_data["name"]
+        claseAcero = post_data["tipoAcero"]
+        coeficiente = float(post_data["coeficiente"])       
+        L = float(post_data["L"])
+        By = float(post_data["By"])
+        Bz = float(post_data["Bz"])
+        resNecN = float(post_data["resNecN"])
+
+        curvaY = calcularCurvaPandeoY(claseAcero)
+        curvaZ = calcularCurvaPandeoZ(claseAcero)
+
+        texto = "Esto es un texto de prueba."
+        return jsonify({'texto' : texto, 'resultado0' : curvaY, 'resultado01' : "Curva en y : ",  'resultado1' : curvaZ, 'resultado11' : "Curva en z : " })
+    else:
+        
+        response_object = {'status':'success'}
+        response_object['message'] ='Data added!'
+        return jsonify(response_object)
+
+@cross_origin
+@app.route("/PanCom4", methods=['POST', 'GET'])
+def getPanCom4():
+    if request.method == "POST":        
+        response_object = {'status':'success'}
+        post_data = request.get_json()
+        #Recogemos los valores introducidos por la aplicacion
+        tipoAce = post_data["name"]
+        claseAcero = post_data["tipoAcero"]
+        coeficiente = float(post_data["coeficiente"])       
+        L = float(post_data["L"])
+        By = float(post_data["By"])
+        Bz = float(post_data["Bz"])
+        resNecN = float(post_data["resNecN"])
+
+        curvaY = calcularCurvaPandeoY(claseAcero)
+        curvaZ = calcularCurvaPandeoZ(claseAcero)
+
+        xy = calcularXy(curvaY)
+        xz = calcularXz(curvaZ)
+
+        texto = "Esto es un texto de prueba."
+        return jsonify({'texto' : texto, 'resultado0' : xy, 'resultado01' : "Xy : ",  'resultado1' : xz, 'resultado11' : "Xz : " })
+    else:
+        
+        response_object = {'status':'success'}
+        response_object['message'] ='Data added!'
+        return jsonify(response_object)
+
+@cross_origin
+@app.route("/PanCom5", methods=['POST', 'GET'])
+def getPanCom5():
+    if request.method == "POST":        
+        response_object = {'status':'success'}
+        post_data = request.get_json()
+        #Recogemos los valores introducidos por la aplicacion
+        tipoAce = post_data["name"]
+        claseAcero = post_data["tipoAcero"]
+        coeficiente = float(post_data["coeficiente"])       
+        L = float(post_data["L"])
+        By = float(post_data["By"])
+        Bz = float(post_data["Bz"])
+        resNecN = float(post_data["resNecN"])
+
+        df = pd.read_excel('Excel.xlsx', header = None,  sheet_name='IPE', skiprows=6, usecols = "B:AP")
+        is_TipoAcero = df.loc[:, 1] == tipoAce
+        df_TipoAcero = df.loc[is_TipoAcero]
+
+        Lky = L * By * 1000
+        Lkz = L * Bz * 1000
+
+        #Extraigo los datos necesarios para calculo.
+        iz = df_TipoAcero.iloc[0][27]
+        iy = df_TipoAcero.iloc[0][22]
+
+        lambday = Lky / (iy * 10)
+        lambdaz = Lkz / (iz * 10)
+
+        esbLim = calcularEsbLim(claseAcero)
+
+        lambdaRedy = lambday / esbLim
+        lambdaRedz = lambdaz / esbLim
+        a = df_TipoAcero.iloc[0][8]
+
+        Ncry = (3.1416 / lambday)**2 * a * 21000
+        Ncrz = (3.1416 / lambdaz)**2 * a * 21000
+
+        Ncry = (round(Ncry, 1))
+        Ncrz = (round(Ncrz, 1))
+
+        texto = "Esto es un texto de prueba."
+        return jsonify({'texto' : texto, 'resultado0' : Ncry, 'resultado01' : "Ncry : ",  'resultado1' : Ncrz, 'resultado11' : "Ncrz : " })
+    else:
+        
+        response_object = {'status':'success'}
+        response_object['message'] ='Data added!'
+        return jsonify(response_object)
+
+@cross_origin
+@app.route("/PanCom6", methods=['POST', 'GET'])
+def getPanCom6():
+    if request.method == "POST":        
+        response_object = {'status':'success'}
+        post_data = request.get_json()
+        #Recogemos los valores introducidos por la aplicacion
+        tipoAce = post_data["name"]
+        claseAcero = post_data["tipoAcero"]
+        coeficiente = float(post_data["coeficiente"])       
+        L = float(post_data["L"])
+        By = float(post_data["By"])
+        Bz = float(post_data["Bz"])
+        resNecN = float(post_data["resNecN"])
+
+        df = pd.read_excel('Excel.xlsx', header = None,  sheet_name='IPE', skiprows=6, usecols = "B:AP")
+        is_TipoAcero = df.loc[:, 1] == tipoAce
+        df_TipoAcero = df.loc[is_TipoAcero]
+        #Extraigo los datos necesarios para calculo.
+        a = df_TipoAcero.iloc[0][8]
+
+        Fyd = calcularFyD(claseAcero, coeficiente)
+        curvaY = calcularCurvaPandeoY(claseAcero)
+        curvaZ = calcularCurvaPandeoZ(claseAcero)
+
+        xy = calcularXy(curvaY)
+        xz = calcularXz(curvaZ)
+
+        resN = calcularResN(Fyd, a)
+
+        Nbrdy = resN * xy
+        Nbrdz = resN * xz
+
+        Nbrdy = (round(Nbrdy, 1))
+        Nbrdz = (round(Nbrdz, 1))
+
+        texto = "Esto es un texto de prueba."
+        return jsonify({'texto' : texto, 'resultado0' : Nbrdy, 'resultado01' : "Nbrdy : ",  'resultado1' : Nbrdz, 'resultado11' : "Nbrdz : " })
+    else:
+        
+        response_object = {'status':'success'}
+        response_object['message'] ='Data added!'
+        return jsonify(response_object)
+
+@cross_origin
+@app.route("/PanCom7", methods=['POST', 'GET'])
+def getPanCom7():
+    if request.method == "POST":        
+        response_object = {'status':'success'}
+        post_data = request.get_json()
+        #Recogemos los valores introducidos por la aplicacion
+        tipoAce = post_data["name"]
+        claseAcero = post_data["tipoAcero"]
+        coeficiente = float(post_data["coeficiente"])       
+        L = float(post_data["L"])
+        By = float(post_data["By"])
+        Bz = float(post_data["Bz"])
+        resNecN = float(post_data["resNecN"])
+
+        df = pd.read_excel('Excel.xlsx', header = None,  sheet_name='IPE', skiprows=6, usecols = "B:AP")
+        is_TipoAcero = df.loc[:, 1] == tipoAce
+        df_TipoAcero = df.loc[is_TipoAcero]
+        #Extraigo los datos necesarios para calculo.
+        a = df_TipoAcero.iloc[0][8]
+
+        Fyd = calcularFyD(claseAcero, coeficiente)
+        curvaY = calcularCurvaPandeoY(claseAcero)
+        curvaZ = calcularCurvaPandeoZ(claseAcero)
+
+        xy = calcularXy(curvaY)
+        xz = calcularXz(curvaZ)
+
+        resN = calcularResN(Fyd, a)
+
+        Nbrdy = resN * xy
+        Nbrdz = resN * xz
+
+        interacy = resNecN / Nbrdy
+        interacz = resNecN / Nbrdz
+
+        interacy = (round(interacy, 2))
+        interacz = (round(interacz, 2))
+
+        texto = "Esto es un texto de prueba."
+        return jsonify({'texto' : texto, 'resultado0' : interacy, 'resultado01' : "Interacción en y : ",  'resultado1' : interacz, 'resultado11' : "Interacción en z : " })
+    else:
+        
+        response_object = {'status':'success'}
+        response_object['message'] ='Data added!'
+        return jsonify(response_object)
+
 
 if __name__ == '__main__':
     app.run(debug=True)
