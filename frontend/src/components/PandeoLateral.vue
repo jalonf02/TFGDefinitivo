@@ -73,30 +73,30 @@
 </template>
 
 <script>
-import axios from "axios";
+import axios from 'axios'
 export default {
-  data() {
+  data () {
     return {
       selected: {
-        name: "",
-        tipo: "",
-        coeficiente: "",
-        tipoAcero: "",
-        resNecN: "",
-        L: "",
-        C1: "",
-        Blt: "",
-        K2: "",
-        E: "",
-        G: "",
+        name: '',
+        tipo: '',
+        coeficiente: '',
+        tipoAcero: '',
+        resNecN: '',
+        L: '',
+        C1: '',
+        Blt: '',
+        K2: '',
+        E: '',
+        G: ''
       },
       pandeo: [],
-      excel: {},
-    };
+      excel: {}
+    }
   },
   methods: {
     getPandeoLateral: function () {
-      const path = "http://127.0.0.1:5000/PandeoLateral";
+      const path = 'http://127.0.0.1:5000/PandeoLateral'
       axios
         .post(path, {
           name: this.selected.name,
@@ -108,33 +108,33 @@ export default {
           Blt: this.selected.Blt,
           K2: this.selected.K2,
           E: this.selected.E,
-          G: this.selected.G,
+          G: this.selected.G
         })
         .then((body) => {
-          this.pandeo = body.data;
+          this.pandeo = body.data
         })
         .catch((err) => {
-          console.log(err);
-        });
-      return false;
+          console.log(err)
+        })
+      return false
     },
     getExcel: function () {
-      const path = "http://127.0.0.1:5000/data";
+      const path = 'http://127.0.0.1:5000/data'
       axios
         .get(path)
         .then((body) => {
-          this.excel = body.data;
+          this.excel = body.data
         })
         .catch((err) => {
-          console.log(err);
-        });
-      return false;
-    },
+          console.log(err)
+        })
+      return false
+    }
   },
-  beforeMount() {
-    this.getExcel();
-  },
-};
+  beforeMount () {
+    this.getExcel()
+  }
+}
 </script>
 
 <style scoped>

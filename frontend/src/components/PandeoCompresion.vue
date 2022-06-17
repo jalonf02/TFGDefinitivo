@@ -1,156 +1,108 @@
 <template>
-  <div id="app" style="margin-top: 10px">
-    <h3 @mouseover="hover = true" @mouseleave="hover = false">
-      Calculo de pandeo de barras a compresión
-    </h3>
-    <div class="supizq" v-show="!datosIntroducidos">
-      <form v-show="!informacionIntroducida">
-        <p>Selección del tipo de acero y coeficiente:</p>
-        <select v-model="selected.tipoAcero">
-          <option disabled value="">Seleccione tipo de acero</option>
-          <option v-bind:key="aux" v-for="aux in excel3['TiposAcero']">
-            {{ aux }}
-          </option>
-        </select>
-        <select v-model="selected.coeficiente">
-          <option disabled value="">Seleccione el coeficiente</option>
-          <option v-bind:key="aux2" v-for="aux2 in excel2['Coeficientes']">
-            {{ aux2 }}
-          </option>
-        </select>
-        <p>Selección del perfil:</p>
-        <select v-model="selected.tipo">
-          <option disabled value="">Seleccione un elemento</option>
-          <option v-bind:key="tipo" v-for="tipo in excel['Tipos']">
-            {{ tipo }}
-          </option>
-        </select>
-        <select id="tipos" v-model="selected.name">
-          <option disabled value="">Seleccione un elemento</option>
-          <option v-bind:key="datos" v-for="datos in excel[selected.tipo]">
-            {{ datos }}
-          </option>
-        </select>
-        <p></p>
-        <button
-          id="button-1"
-          type="button"
-          v-on:click="cambioInformacion()"
-          variant="dark"
-        >
-          Introducir datos
-        </button>
-      </form>
-      <form v-show="informacionIntroducida2">
-        <p>Introduzca L() m:</p>
-        <input placeholder="L() m " v-model="selected.L" />
-        <p>Introduzca βy y βz:</p>
-        <input placeholder="βy" v-model="selected.By" />
-        <input placeholder="βz" v-model="selected.Bz" />
-        <p>Introduzca NEd:</p>
-        <input placeholder="NEd" v-model="selected.resNecN" />
-        <p>
-          <button
-            id="button-1"
-            type="button"
-            v-on:click="cambioInformacion2()"
-            variant="dark"
-          >
-            Introducir datos
-          </button>
-        </p>
-      </form>
-    </div>
-    <div class="supder">
-      <h4 class="titulo" v-show="ocultar">Desarrollo paso a paso</h4>
-      {{ nextPaso["texto"] }}
-      {{ nextPaso["resultado01"] }}{{ nextPaso["resultado0"] }}
-      {{ nextPaso["resultado11"] }}{{ nextPaso["resultado1"] }}
-      <button
-        id="button4"
-        type="submit"
-        v-show="ocultar2"
-        v-on:click="getPasoAnterior()"
-        variant="dark"
-      >
-        Anterior
-      </button>
-      <button
-        id="button2"
-        type="submit"
-        v-show="ocultar"
-        v-on:click="getPasoSiguiente()"
-        variant="dark"
-      >
-        Siguiente
-      </button>
-      <button id="button2" type="reset" v-show="ocultar" variant="dark">
-        Introducir nuevos datos
-      </button>
-      <img
-        id="imagenPaso"
-        src="../assets/CalculoFyD.png"
-        v-show="ocultar"
-        class="imagen"
-      />
-    </div>
+<div id="app" style="margin-top:10px">
+ <h3  @mouseover="hover = true" @mouseleave="hover = false">Calculo de pandeo de barras a compresión</h3>
+ <div class="supizq" v-show="!datosIntroducidos">
+    <form v-show="!informacionIntroducida">
+      <p>Selección del tipo de acero y coeficiente:</p>
+    <select v-model="selected.tipoAcero">
+      <option disabled value="">Seleccione tipo de acero</option>
+      <option v-bind:key="aux" v-for="aux in excel3['TiposAcero']">
+      {{aux}}
+      </option>
+    </select>
+    <select v-model="selected.coeficiente">
+      <option disabled value="">Seleccione el coeficiente</option>
+      <option v-bind:key="aux2" v-for="aux2 in excel2['Coeficientes']">
+      {{aux2}}
+      </option>
+    </select>
+    <p> Selección del perfil:</p>
+    <select v-model="selected.tipo">
+      <option disabled value="">Seleccione un elemento</option>
+      <option v-bind:key="tipo" v-for="tipo in excel['Tipos']">
+      {{tipo}}
+      </option>
+    </select>
+    <select id="tipos" v-model="selected.name">
+      <option disabled value="">Seleccione un elemento</option>
+      <option v-bind:key="datos" v-for="datos in excel[selected.tipo]">
+      {{datos}}
+      </option>
+    </select>
     <p></p>
-    <div class="abajo">
-      <button
-        id="button3"
-        type="submit"
-        v-show="ocultar"
-        v-on:click="getPandeoCompresion()"
-        variant="dark"
-      >
-        Mostrar todos los resultados
-      </button>
-      <p></p>
-      <table class="table" id="tablaContenido">
+    <button id="button-1" type="button" v-on:click="cambioInformacion()" variant="dark">Introducir datos</button>
+    </form>
+    <form v-show="informacionIntroducida2">
+    <p> Introduzca L() m:</p>
+    <input placeholder="L() m " v-model="selected.L">
+    <p> Introduzca βy y βz:</p>
+    <input placeholder="βy" v-model="selected.By">
+    <input placeholder="βz" v-model="selected.Bz">
+    <p> Introduzca NEd:</p>
+    <input placeholder="NEd" v-model="selected.resNecN">
+    <p>
+    <button id="button-1" type="button" v-on:click="cambioInformacion2()" variant="dark">Introducir datos</button>
+    </p>
+    </form>
+ </div>
+<div class="supder">
+  <h4 class="titulo" v-show="ocultar">Desarrollo paso a paso</h4>
+{{nextPaso["texto"]}}
+{{nextPaso["resultado01"]}}{{nextPaso["resultado0"]}}
+{{nextPaso["resultado11"]}}{{nextPaso["resultado1"]}}
+<button id="button4" type="submit" v-show="ocultar2" v-on:click="getPasoAnterior()" variant="dark">Anterior</button>
+<button id="button2" type="submit" v-show="ocultar" v-on:click="getPasoSiguiente()" variant="dark">Siguiente</button>
+<button id="button2" type="reset" v-show="ocultar" variant="dark">Introducir nuevos datos</button>
+<img id="imagenPaso" src ="../assets/CalculoFyD.png" v-show="ocultar" class="imagen"/>
+</div>
+<p></p>
+<div class="abajo">
+  <button id="button3" type="submit" v-show="ocultar" v-on:click="getPandeoCompresion()" variant="dark">Mostrar todos los resultados</button>
+  <p></p>
+    <table class = "table" id="tablaContenido">
         <thead>
-          <tr>
-            <th></th>
-            <th>Lₖ (mm)</th>
-            <th>λmec</th>
-            <th>λreducida</th>
-            <th>curva</th>
-            <th>X</th>
-            <th>Ncr</th>
-            <th>Nb,Rd</th>
-            <th>interac.</th>
-          </tr>
+            <tr>
+                <th></th>
+                <th>Lₖ (mm)</th>
+                <th>λmec</th>
+                <th>λreducida</th>
+                <th>curva</th>
+                <th>X</th>
+                <th>Ncr</th>
+                <th>Nb,Rd</th>
+                <th>interac.</th>
+            </tr>
         </thead>
         <tbody>
-          <tr>
-            <td>Eje Y</td>
-            <td>{{ pandeo[0] }}</td>
-            <td>{{ pandeo[2] }}</td>
-            <td>{{ pandeo[4] }}</td>
-            <td>{{ pandeo[6] }}</td>
-            <td>{{ pandeo[8] }}</td>
-            <td>{{ pandeo[10] }}</td>
-            <td>{{ pandeo[12] }}</td>
-            <td>{{ pandeo[14] }}</td>
-          </tr>
-          <tr>
-            <td>Eje Z</td>
-            <td>{{ pandeo[1] }}</td>
-            <td>{{ pandeo[3] }}</td>
-            <td>{{ pandeo[5] }}</td>
-            <td>{{ pandeo[7] }}</td>
-            <td>{{ pandeo[9] }}</td>
-            <td>{{ pandeo[11] }}</td>
-            <td>{{ pandeo[13] }}</td>
-            <td>{{ pandeo[15] }}</td>
-          </tr>
+            <tr>
+                <td>Eje Y</td>
+                <td>{{pandeo[0]}}</td>
+                <td>{{pandeo[2]}}</td>
+                <td>{{pandeo[4]}}</td>
+                <td>{{pandeo[6]}}</td>
+                <td>{{pandeo[8]}}</td>
+                <td>{{pandeo[10]}}</td>
+                <td>{{pandeo[12]}}</td>
+                <td>{{pandeo[14]}}</td>
+            </tr>
+            <tr>
+                <td>Eje Z</td>
+                <td>{{pandeo[1]}}</td>
+                <td>{{pandeo[3]}}</td>
+                <td>{{pandeo[5]}}</td>
+                <td>{{pandeo[7]}}</td>
+                <td>{{pandeo[9]}}</td>
+                <td>{{pandeo[11]}}</td>
+                <td>{{pandeo[13]}}</td>
+                <td>{{pandeo[15]}}</td>
+            </tr>
         </tbody>
-      </table>
-    </div>
+    </table>
   </div>
+</div>
 </template>
 
 <script>
-import reactive from vue
 import axios from 'axios'
 export default{
   data () {
@@ -313,42 +265,42 @@ export default{
 </script>
 
 <style scoped>
-.app {
-  text-align: center;
-  align-content: center;
+.app{
+    text-align: center;
+    align-content: center;
 }
-.table {
-  font-size: 1rem;
-  margin-left: auto;
-  margin-right: auto;
-  border-spacing: 2cm;
-  border: 1px solid;
+.table{
+    font-size: 1rem;
+    margin-left: auto;
+    margin-right: auto;
+    border-spacing:2cm;
+    border: 1px solid;
 }
-.supizq {
-  float: left;
-  width: 40%;
-  text-align: left;
-  margin-left: 30px;
-  height: 400px;
+.supizq{
+    float: left;
+    width: 40%;
+    text-align: left;
+    margin-left: 30px;
+    height: 400px;
 }
-.supder {
-  float: left;
-  width: 54%;
-  text-align: left;
-  white-space: pre-line;
-  height: 400px;
-  margin-left: 30px;
+.supder{
+    float: left;
+    width: 54%;
+    text-align: left;
+    white-space:pre-line;
+    height: 400px;
+    margin-left: 30px;
 }
-.abajo {
+.abajo{
   float: left;
   width: 100%;
 }
-.titulo {
+.titulo{
   text-align: center;
   margin-top: 0px;
   margin-bottom: 0px;
 }
-.imagen {
+.imagen{
   width: 100px;
   height: auto;
 }

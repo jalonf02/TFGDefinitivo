@@ -168,25 +168,25 @@
 </template>
 
 <script>
-import axios from "axios";
+import axios from 'axios'
 export default {
-  data() {
+  data () {
     return {
       selected: {
-        name: "",
-        tipo: "",
-        coeficiente: "",
-        tipoAcero: "",
-        clase: "",
+        name: '',
+        tipo: '',
+        coeficiente: '',
+        tipoAcero: '',
+        clase: ''
       },
       resistencias: [],
       excel: {},
       excel2: {},
       excel3: {},
       nextPaso: [],
-      resN: "",
-      resMy: "",
-      resMz: "",
+      resN: '',
+      resMy: '',
+      resMz: '',
       paso: 0,
       contadorElementos: 0,
       informacionIntroducida: false,
@@ -194,61 +194,57 @@ export default {
       ocultar2: false,
       informacionIntroducida2: false,
       informacionIntroducida3: false,
-      datosIntroducidos: false,
-    };
+      datosIntroducidos: false
+    }
   },
   methods: {
     cambioInformacion: function () {
-      if (
-        this.selected.name !== "" &&
-        this.selected.coeficiente !== "" &&
-        this.selected.tipoAcero !== ""
-      ) {
-        this.informacionIntroducida = true;
-        this.informacionIntroducida2 = true;
-        this.nextPaso["texto"] =
-          "El tipo de acero seleccionado es " +
+      if (this.selected.name !== '' && this.selected.coeficiente !== '' && this.selected.tipoAcero !== '') {
+        this.informacionIntroducida = true
+        this.informacionIntroducida2 = true
+        this.nextPaso['texto'] =
+          'El tipo de acero seleccionado es ' +
           this.selected.tipoAcero +
-          ".\n" +
-          "El coeficiente seleccionado es " +
+          '.\n' +
+          'El coeficiente seleccionado es ' +
           this.selected.coeficiente +
-          ".\n" +
-          "El perfil seleccionado es " +
+          '.\n' +
+          'El perfil seleccionado es ' +
           this.selected.name +
-          ".\n\n" +
-          "Ahora, para el cálculo de pandeo de barras a compresión será necesario añadir los siguientes valores: \n\n" +
-          "Primero, debemos introducir tanto la longitud de la barra (L) en metros." +
-          " Además, serán necesarios los coeficientes β tanto para el eje y como  para el eje x." +
-          "Por último, se debe añadir el esfuerzo axil (NEd) en kN ya que será necesario para cáculos posteriores.";
+          '.\n\n' +
+          'Ahora, para el cálculo de pandeo de barras a compresión será necesario añadir los siguientes valores: \n\n' +
+          'Primero, debemos introducir tanto la longitud de la barra (L) en metros.' +
+          ' Además, serán necesarios los coeficientes β tanto para el eje y como  para el eje x.' +
+          'Por último, se debe añadir el esfuerzo axil (NEd) en kN ya que será necesario para cáculos posteriores.'
       }
-      return false;
+      return false
     },
     cambioInformacion2: function () {
-      if (this.selected.resN !== "" && this.selected.clase) {
-        this.informacionIntroducida2 = false;
-        this.informacionIntroducida3 = true;
-        this.ocultar = true;
-        this.nextPaso["texto"] =
-          "La longitud de barra seleccionada es L = " +
+      if (this.selected.resN !== '' && this.selected.clase !== '') {
+        this.informacionIntroducida2 = false
+        this.informacionIntroducida3 = true
+        this.ocultar = true
+        this.nextPaso['texto'] =
+          'La longitud de barra seleccionada es L = ' +
           this.selected.L +
-          " m.\n" +
-          "El coeficiente β seleccionado para el eje y es " +
+          ' m.\n' +
+          'El coeficiente β seleccionado para el eje y es ' +
           this.selected.By +
-          ".\n" +
-          "El coeficiente β seleccionado para el eje z es " +
+          '.\n' +
+          'El coeficiente β seleccionado para el eje z es ' +
           this.selected.Bz +
-          ".\n" +
-          "El esfuerzo axil seleccionado para el eje z es Ned = " +
+          '.\n' +
+          'El esfuerzo axil seleccionado para el eje z es Ned = ' +
           this.selected.resNecN +
-          "kN.\n\n" +
-          "Ahora, para el cálculo de pandeo de barras a compresión será necesario añadir los siguientes valores: \n\n" +
-          "Primero, debemos introducir tanto la longitud de la barra (L) en metros." +
-          "Además, serán necesarios los coeficientes β tanto para el eje x como  para el eje y.";
+          'kN.\n\n' +
+          'Ahora, para el cálculo de pandeo de barras a compresión será necesario añadir los siguientes valores: \n\n' +
+          'Primero, debemos introducir tanto la longitud de la barra (L) en metros.' +
+          'Además, serán necesarios los coeficientes β tanto para el eje x como  para el eje y.'
       }
-      return false;
+      return false
     },
     getResistencias: function () {
-      const path = "http://127.0.0.1:5000/dataentry";
+      const path = 'http://127.0.0.1:5000/dataentry'
       axios
         .post(path, {
           name: this.selected.name,
@@ -257,51 +253,51 @@ export default {
           clase: this.selected.clase,
           resN: this.resN,
           resMy: this.resMy,
-          resMz: this.resMz,
+          resMz: this.resMz
         })
         .then((body) => {
-          this.resistencias = body.data;
+          this.resistencias = body.data
         })
         .catch((err) => {
-          console.log(err);
-        });
-      return false;
+          console.log(err)
+        })
+      return false
     },
     getExcel: function () {
-      const path = "http://127.0.0.1:5000/data";
+      const path = 'http://127.0.0.1:5000/data'
       axios
         .get(path)
         .then((body) => {
-          this.excel = body.data;
+          this.excel = body.data
         })
         .catch((err) => {
-          console.log(err);
-        });
-      const path2 = "http://127.0.0.1:5000/data2";
+          console.log(err)
+        })
+      const path2 = 'http://127.0.0.1:5000/data2'
       axios
         .get(path2)
         .then((body) => {
-          this.excel2 = body.data;
+          this.excel2 = body.data
         })
         .catch((err) => {
-          console.log(err);
-        });
-      const path3 = "http://127.0.0.1:5000/data3";
+          console.log(err)
+        })
+      const path3 = 'http://127.0.0.1:5000/data3'
       axios
         .get(path3)
         .then((body) => {
-          this.excel3 = body.data;
+          this.excel3 = body.data
         })
         .catch((err) => {
-          console.log(err);
-        });
-      return false;
-    },
+          console.log(err)
+        })
+      return false
+    }
   },
-  beforeMount() {
-    this.getExcel();
-  },
-};
+  beforeMount () {
+    this.getExcel()
+  }
+}
 </script>
 
 <style scoped>
