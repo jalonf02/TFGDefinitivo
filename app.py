@@ -2,6 +2,7 @@ from email import header
 from flask import Flask, render_template, url_for, request, redirect, json, jsonify, Blueprint
 from flask_cors import CORS, cross_origin
 import pandas as pd
+from PIL import Image
 
 #2 -> IPE 240 - IPE 400 HE 280 A -> HE 300 A 
 def flexCompr(tipoMetal):
@@ -67,29 +68,39 @@ def calcularCurvaPandeoZ(claseAcero):
     else:
         return "b"
 
-def calcularXy(curvaPandeoY):
+def calcularXy(curvaPandeoY, lamRedy):
     if curvaPandeoY == "a0":
-        return 0.98
+        aux = 0.5 * (1 + 0.13*(lamRedy - 0.2) + lamRedy**2)
+        return 1/(aux + (aux*aux - lamRedy**2)**0.5)
     elif curvaPandeoY == "a":
-        return 0.97
+        aux = 0.5 * (1 + 0.21*(lamRedy - 0.2) + lamRedy**2)
+        return 1/(aux + (aux*aux - lamRedy**2)**0.5)
     elif curvaPandeoY == "b":
-        return 0.96
+        aux = 0.5 * (1 + 0.34*(lamRedy - 0.2) + lamRedy**2)
+        return 1/(aux + (aux*aux - lamRedy**2)**0.5)
     elif curvaPandeoY == "c":
-        return 0.94
+        aux = 0.5 * (1 + 0.49*(lamRedy - 0.2) + lamRedy**2)
+        return 1/(aux + (aux*aux - lamRedy**2)**0.5)
     else:
-        return 0.91
+        aux = 0.5 * (1 + 0.76*(lamRedy - 0.2) + lamRedy**2)
+        return 1/(aux + (aux*aux - lamRedy**2)**0.5)
 
-def calcularXz(curvaPandeoZ):
+def calcularXz(curvaPandeoZ, lamRedz):
     if curvaPandeoZ == "a0":
-        return 0.27
+        aux = 0.5 * (1 + 0.13*(lamRedz - 0.2) + lamRedz**2)
+        return 1/(aux + (aux*aux - lamRedz**2)**0.5)
     elif curvaPandeoZ == "a":
-        return 0.25
+        aux = 0.5 * (1 + 0.21*(lamRedz - 0.2) + lamRedz**2)
+        return 1/(aux + (aux*aux - lamRedz**2)**0.5)
     elif curvaPandeoZ == "b":
-        return 0.24
+        aux = 0.5 * (1 + 0.34*(lamRedz - 0.2) + lamRedz**2)
+        return 1/(aux + (aux*aux - lamRedz**2)**0.5)
     elif curvaPandeoZ == "c":
-        return 0.22
+        aux = 0.5 * (1 + 0.49*(lamRedz - 0.2) + lamRedz**2)
+        return 1/(aux + (aux*aux - lamRedz**2)**0.5)
     else:
-        return 0.20
+        aux = 0.5 * (1 + 0.76*(lamRedz - 0.2) + lamRedz**2)
+        return 1/(aux + (aux*aux - lamRedz**2)**0.5)
 
 
 app = Flask(__name__)
@@ -102,15 +113,36 @@ app.config['CORS_HEADERS'] = 'Content-Type'
 @app.route("/data", methods=['GET'])
 def getExcel():
     excel = {}
-    with open("Excel2.csv", "r") as f:
+    with open("ExcelPerfiles.csv", "r") as f:
         datos = f.readlines()
         excel['Tipos'] = list(filter(lambda x: len(x.strip())>0, datos[0].split(";")))
         i = 1
         for tipo in excel['Tipos']:
             excel[tipo] = list(filter(lambda x: len(x.strip())>0, datos[i].split(";")))
             i = i+1
-    return jsonify(excel)
     
+    return jsonify(excel)
+
+@cross_origin
+@app.route("/data2", methods=['GET'])
+def getExcel2():
+    excel = {}   
+    with open("ExcelCoeficientes.csv", "r") as f:
+        datos = f.readlines()
+        excel['Coeficientes'] = list(filter(lambda x: len(x.strip())>0, datos[0].split(";")))
+    
+    return jsonify(excel)
+
+@cross_origin
+@app.route("/data3", methods=['GET'])
+def getExcel3():
+    excel = {}
+    with open("ExcelTiposAcero.csv", "r") as f:
+        datos = f.readlines()
+        excel['TiposAcero'] = list(filter(lambda x: len(x.strip())>0, datos[0].split(";")))
+    
+    return jsonify(excel)
+
 @cross_origin
 @app.route("/dataentry", methods=['POST', 'GET'])
 def getResistencias():
@@ -122,6 +154,11 @@ def getResistencias():
         tipoAcero = post_data["name"]
         claseAcero = post_data["tipoAcero"]
         coeficiente = float(post_data["coeficiente"])
+        fCompr = int(post_data["clase"])
+        Ned = int(post_data["resN"])
+        Myed = float(post_data["resMy"])
+        Mzed = float(post_data["resMz"])
+
 
         df = pd.read_excel('Excel.xlsx', header = None,  sheet_name='IPE', skiprows=6, usecols = "B:AP")
         is_TipoAcero = df.loc[:, 1] == tipoAcero
@@ -133,20 +170,65 @@ def getResistencias():
         Wpl = df_TipoAcero.iloc[0][21]
         Welz = df_TipoAcero.iloc[0][25]
         Wplz = df_TipoAcero.iloc[0][26]
-        fCompr = flexCompr(tipoAcero)
+        Avz = df_TipoAcero.iloc[0][23]
+        hi = df_TipoAcero.iloc[0][9]
+        tw = df_TipoAcero.iloc[0][5]
+        b = df_TipoAcero.iloc[0][4]
+        tf = df_TipoAcero.iloc[0][6]
+        Avy = a - Avz
         Fyd = calcularFyD(claseAcero, coeficiente)
 
         #Calculo de resistencias
+        
         resN = calcularResN(Fyd, a)
         resMy = calcularResMy(fCompr, Wel, Wpl, Fyd)
         resMz = calcularResMz(fCompr, Welz, Wplz, Fyd)
+        Vy = Avy *  (1/3**0.5) * Fyd / 10
+        Vz = Avz *  (1/3**0.5) * Fyd / 10
+
+        interacCTE = 0.0
+        interacEC3 = 0.0
+        
+        #Calculo Interacciones
+        n = Ned / resN
+        
+        aux = 5*n - 1
+        aux2 = (a - 2*b*tf) / a
+
+        if aux < 1 :
+            aux = 1
+
+        Myaux = resMy * ( (1 - n) / (1-aux2/2))
+        Mzaux = resMz * (1 - ((n-aux2)/(1-aux2))**2)
+
+        if Ned <= (0.25*resN) and Ned <= (0.5 * hi * tw * Fyd):
+            Myaux = resMy
+        elif Myaux > resMy:
+            Myaux = resMy
+
+        if Ned<= hi*tw*Fyd:
+            Mzaux = resMz
+        elif Mzaux > resMz:
+            Mzaux = resMz
+
+        interacCTE = Ned / resN + Myed / resMy + Mzed / resMz
+
+        if fCompr == 3 :
+            interacEC3 = Ned / resN + Myed / resMy + Mzed / resMz
+        else :
+            interacEC3 = (Myed / Myaux)**2  + (Mzed / Mzaux)**aux
+
 
         resN = (round(resN, 1))
         resMy = (round(resMy, 1))
         resMz = (round(resMz, 1))
-
+        Vy = (round(Vy, 1))
+        Vz = (round(Vz, 1))
+        interacEC3 = (round(interacEC3,2))
+        interacCTE = (round(interacCTE,2))
+        
         response_object['message'] ='Data added!'
-        return jsonify({'Resistencia N' : resN, 'Resistencia My' : resMy, 'Resistencia Mz' : resMz})
+        return jsonify({0 : resN, 1 : resMy, 2 : resMz, 3 : Vy, 4 : Vz, 5 : interacCTE, 6 : interacEC3})
     else:
         
         response_object = {'status':'success'}
@@ -284,11 +366,11 @@ def getPandeoCompresion():
         curvaY = calcularCurvaPandeoY(claseAcero)
         curvaZ = calcularCurvaPandeoZ(claseAcero)
 
-        xy = calcularXy(curvaY)
-        xz = calcularXz(curvaZ)
-
         lambdaRedy = lambday / esbLim
         lambdaRedz = lambdaz / esbLim
+
+        xy = calcularXy(curvaY, lambdaRedy)
+        xz = calcularXz(curvaZ, lambdaRedz)
 
         Ncry = (3.1416 / lambday)**2 * a * 21000
         Ncrz = (3.1416 / lambdaz)**2 * a * 21000
@@ -316,9 +398,9 @@ def getPandeoCompresion():
         interacz = (round(interacz, 2))
 
         response_object['message'] ='Data added!'
-        return jsonify({'0' : Lky, '1' : Lkz, '2' : lambday, '3' : lambdaz, '4' : lambdaRedy, 
-        '5' : lambdaRedz, '6' : curvaY, '7' : curvaZ, '8' : xy, '9' : xz, '10' : Ncry , 
-        '11' : Ncrz, '12' : Nbrdy, '13' : Nbrdz, '14' : interacy, '15' : interacz})
+        return jsonify({0 : Lky, 1 : Lkz, 2 : lambday, 3 : lambdaz, 4 : lambdaRedy, 
+        5 : lambdaRedz, 6 : curvaY, 7 : curvaZ, 8 : xy, 9 : xz, 10 : Ncry , 
+        11 : Ncrz, 12 : Nbrdy, 13 : Nbrdz, 14  : interacy, 15 : interacz})
     else:
         
         response_object = {'status':'success'}
@@ -344,10 +426,8 @@ def getPanCom0():
         Lky = L * By * 1000
         Lkz = L * Bz * 1000
 
-        
-
-        texto = "Esto es un texto de prueba.\n Prueba"
-        return jsonify({'texto' : texto, 'resultado0' : Lky, 'resultado01' : "Lky : ",  'resultado1' : Lkz, 'resultado11' : "Lkz : " })
+        texto = 'Esto es un texto de prueba.\n Prueba'
+        return jsonify({'texto' : texto, 'resultado0' : Lky, 'resultado01' : "Lky : ",  'resultado1' : Lkz, 'resultado11' : "Lkz : "})
     else:
         
         response_object = {'status':'success'}
@@ -479,12 +559,36 @@ def getPanCom4():
         By = float(post_data["By"])
         Bz = float(post_data["Bz"])
         resNecN = float(post_data["resNecN"])
+        
+        #Extraigo los datos necesarios para calculo.
+        df = pd.read_excel('Excel.xlsx', header = None,  sheet_name='IPE', skiprows=6, usecols = "B:AP")
+        is_TipoAcero = df.loc[:, 1] == tipoAce
+        df_TipoAcero = df.loc[is_TipoAcero]
+        iz = df_TipoAcero.iloc[0][27]
+        iy = df_TipoAcero.iloc[0][22]
 
         curvaY = calcularCurvaPandeoY(claseAcero)
         curvaZ = calcularCurvaPandeoZ(claseAcero)
 
-        xy = calcularXy(curvaY)
-        xz = calcularXz(curvaZ)
+        Lky = L * By * 1000
+        Lkz = L * Bz * 1000
+
+        lambday = Lky / (iy * 10)
+        lambdaz = Lkz / (iz * 10)
+
+        esbLim = calcularEsbLim(claseAcero)
+
+        curvaY = calcularCurvaPandeoY(claseAcero)
+        curvaZ = calcularCurvaPandeoZ(claseAcero)
+
+        lambdaRedy = lambday / esbLim
+        lambdaRedz = lambdaz / esbLim
+
+        xy = calcularXy(curvaY, lambdaRedy)
+        xz = calcularXz(curvaZ, lambdaRedz)
+        
+        xy = round(xy, 2)
+        xz = round(xz, 2)
 
         texto = "Esto es un texto de prueba."
         return jsonify({'texto' : texto, 'resultado0' : xy, 'resultado01' : "Xy : ",  'resultado1' : xz, 'resultado11' : "Xz : " })
@@ -558,18 +662,38 @@ def getPanCom6():
         Bz = float(post_data["Bz"])
         resNecN = float(post_data["resNecN"])
 
+        #Extraigo los datos necesarios para calculo.
         df = pd.read_excel('Excel.xlsx', header = None,  sheet_name='IPE', skiprows=6, usecols = "B:AP")
         is_TipoAcero = df.loc[:, 1] == tipoAce
         df_TipoAcero = df.loc[is_TipoAcero]
-        #Extraigo los datos necesarios para calculo.
+        iz = df_TipoAcero.iloc[0][27]
+        iy = df_TipoAcero.iloc[0][22]
         a = df_TipoAcero.iloc[0][8]
 
-        Fyd = calcularFyD(claseAcero, coeficiente)
         curvaY = calcularCurvaPandeoY(claseAcero)
         curvaZ = calcularCurvaPandeoZ(claseAcero)
 
-        xy = calcularXy(curvaY)
-        xz = calcularXz(curvaZ)
+        Lky = L * By * 1000
+        Lkz = L * Bz * 1000
+
+        lambday = Lky / (iy * 10)
+        lambdaz = Lkz / (iz * 10)
+
+        esbLim = calcularEsbLim(claseAcero)
+
+        curvaY = calcularCurvaPandeoY(claseAcero)
+        curvaZ = calcularCurvaPandeoZ(claseAcero)
+
+        lambdaRedy = lambday / esbLim
+        lambdaRedz = lambdaz / esbLim
+
+        xy = calcularXy(curvaY, lambdaRedy)
+        xz = calcularXz(curvaZ, lambdaRedz)
+
+        Fyd = calcularFyD(claseAcero, coeficiente)
+
+        xy = calcularXy(curvaY, lambdaRedy)
+        xz = calcularXz(curvaZ, lambdaRedz)
 
         resN = calcularResN(Fyd, a)
 
@@ -602,19 +726,35 @@ def getPanCom7():
         Bz = float(post_data["Bz"])
         resNecN = float(post_data["resNecN"])
 
+        #Extraigo los datos necesarios para calculo.
         df = pd.read_excel('Excel.xlsx', header = None,  sheet_name='IPE', skiprows=6, usecols = "B:AP")
         is_TipoAcero = df.loc[:, 1] == tipoAce
         df_TipoAcero = df.loc[is_TipoAcero]
-        #Extraigo los datos necesarios para calculo.
+        iz = df_TipoAcero.iloc[0][27]
+        iy = df_TipoAcero.iloc[0][22]
         a = df_TipoAcero.iloc[0][8]
 
-        Fyd = calcularFyD(claseAcero, coeficiente)
         curvaY = calcularCurvaPandeoY(claseAcero)
         curvaZ = calcularCurvaPandeoZ(claseAcero)
 
-        xy = calcularXy(curvaY)
-        xz = calcularXz(curvaZ)
+        Lky = L * By * 1000
+        Lkz = L * Bz * 1000
 
+        lambday = Lky / (iy * 10)
+        lambdaz = Lkz / (iz * 10)
+
+        esbLim = calcularEsbLim(claseAcero)
+
+        curvaY = calcularCurvaPandeoY(claseAcero)
+        curvaZ = calcularCurvaPandeoZ(claseAcero)
+
+        lambdaRedy = lambday / esbLim
+        lambdaRedz = lambdaz / esbLim
+
+        xy = calcularXy(curvaY, lambdaRedy)
+        xz = calcularXz(curvaZ, lambdaRedz)
+
+        Fyd = calcularFyD(claseAcero, coeficiente)
         resN = calcularResN(Fyd, a)
 
         Nbrdy = resN * xy
