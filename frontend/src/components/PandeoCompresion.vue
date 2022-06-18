@@ -1,178 +1,185 @@
 <template>
-  <div id="app" style="margin-top: 10px">
-    <h3 @mouseover="hover = true" @mouseleave="hover = false">
-      Calculo de pandeo de barras a compresión
-    </h3>
-    <div class = "superior">
-    <div class="supizq">
-      <form v-show="!informacionIntroducida">
-        <p>Selección del tipo de acero y coeficiente:</p>
-        <select v-model="selected.tipoAcero">
-          <option disabled value="">Seleccione tipo de acero</option>
-          <option v-bind:key="aux" v-for="aux in excel3['TiposAcero']">
-            {{ aux }}
-          </option>
-        </select>
-        <select v-model="selected.coeficiente">
-          <option disabled value="">Seleccione el coeficiente</option>
-          <option v-bind:key="aux2" v-for="aux2 in excel2['Coeficientes']">
-            {{ aux2 }}
-          </option>
-        </select>
-        <p>Selección del perfil:</p>
-        <select v-model="selected.tipo">
-          <option disabled value="">Seleccione un elemento</option>
-          <option v-bind:key="tipo" v-for="tipo in excel['Tipos']">
-            {{ tipo }}
-          </option>
-        </select>
-        <select id="tipos" v-model="selected.name">
-          <option disabled value="">Seleccione un elemento</option>
-          <option v-bind:key="datos" v-for="datos in excel[selected.tipo]">
-            {{ datos }}
-          </option>
-        </select>
-        <p></p>
-        <button
-          id="button-1"
-          type="button"
-          v-on:click="cambioInformacion()"
-          variant="dark"
-        >
-          Introducir datos
-        </button>
-      </form>
-      <form v-show="informacionIntroducida2">
-        <p>Introduzca L() m:</p>
-        <input placeholder="L() m " v-model="selected.L" />
-        <p>Introduzca βy y βz:</p>
-        <input placeholder="βy" v-model="selected.By" />
-        <input placeholder="βz" v-model="selected.Bz" />
-        <p>Introduzca NEd:</p>
-        <input placeholder="NEd" v-model="selected.resNecN" />
-        <p>
+  <div id="app" style="margin-top: 0px">
+    <div class="superior">
+      <h3>Calculo de pandeo de barras a compresión</h3>
+      <div class="supizq">
+        <form v-show="!informacionIntroducida">
+          <p>Selección del tipo de acero y coeficiente:</p>
+          <select v-model="selected.tipoAcero">
+            <option disabled value="">Seleccione tipo de acero</option>
+            <option v-bind:key="aux" v-for="aux in excel3['TiposAcero']">
+              {{ aux }}
+            </option>
+          </select>
+          <select v-model="selected.coeficiente">
+            <option disabled value="">Seleccione el coeficiente</option>
+            <option v-bind:key="aux2" v-for="aux2 in excel2['Coeficientes']">
+              {{ aux2 }}
+            </option>
+          </select>
+          <p>Selección del perfil:</p>
+          <select v-model="selected.tipo">
+            <option disabled value="">Seleccione un elemento</option>
+            <option v-bind:key="tipo" v-for="tipo in excel['Tipos']">
+              {{ tipo }}
+            </option>
+          </select>
+          <select id="tipos" v-model="selected.name">
+            <option disabled value="">Seleccione un elemento</option>
+            <option v-bind:key="datos" v-for="datos in excel[selected.tipo]">
+              {{ datos }}
+            </option>
+          </select>
+          <p></p>
           <button
             id="button-1"
             type="button"
-            v-on:click="cambioInformacion2()"
+            v-on:click="cambioInformacion()"
             variant="dark"
           >
-            Iniciar
+            Introducir datos
           </button>
-        </p>
-      </form>
+        </form>
+        <form v-show="informacionIntroducida2">
+          <p>Introduzca L() m:</p>
+          <input placeholder="L() m " v-model="selected.L" />
+          <p>Introduzca βy y βz:</p>
+          <input placeholder="βy" v-model="selected.By" />
+          <input placeholder="βz" v-model="selected.Bz" />
+          <p>Introduzca NEd:</p>
+          <input placeholder="NEd" v-model="selected.resNecN" />
+          <p>
+            <button
+              id="button-1"
+              type="button"
+              v-on:click="cambioInformacion2()"
+              variant="dark"
+            >
+              Iniciar
+            </button>
+          </p>
+        </form>
+      </div>
+      <div class="formulas">
+        <h4>Formulas:</h4>
+        <img
+          id="imagenPaso3"
+          src="../assets/CurvaPandeo.png"
+          v-show="this.paso === 4"
+          class="curvaPandeo"
+        />
+        <br />
+        <img
+          id="imagenPaso0"
+          src="../assets/CalculoFyD.png"
+          v-show="pantallaInicial"
+          class="imagen"
+        />
+        <img
+          id="imagenPaso0"
+          src="../assets/CalculoLk.png"
+          v-if="(hover0 && this.paso !== 1) || this.paso === 1"
+          class="imagen"
+        />
+        <img
+          id="imagenPaso1"
+          src="../assets/CalculoLambda.png"
+          v-if="(hover1 && this.paso !== 2) || this.paso === 2"
+          class="imagen"
+        />
+        <img
+          id="imagenPaso2"
+          src="../assets/CalculoLambdaRed.png"
+          v-if="(hover2 && this.paso !== 3) || this.paso === 3"
+          class="imagen"
+        />
+        <img
+          id="imagenPaso4"
+          src="../assets/CalcularChi.png"
+          v-if="(hover4 && this.paso !== 5) || this.paso === 5"
+          class="imagen2"
+        />
+        <img
+          id="imagenPaso5"
+          src="../assets/CalculoNbrd.png"
+          v-if="(hover5 && this.paso !== 6) || this.paso === 6"
+          class="imagen"
+        />
+        <img
+          id="imagenPaso6"
+          src="../assets/CalculoInteraccion.png"
+          v-if="(hover6 && this.paso !== 7) || this.paso === 7"
+          class="imagen"
+        />
+      </div>
+      <div class="centro">
+        <h4 class="titulo">Desarrollo paso a paso</h4>
+        {{ nextPaso["texto"] }}
+        {{ nextPaso["resultado0"] }}
+        {{ nextPaso["resultado1"] }}
+        <br />
+        <button
+          id="button4"
+          type="button"
+          v-show="ocultar2"
+          v-on:click="getPasoAnterior()"
+          variant="dark"
+          class="botton"
+        >
+          Anterior
+        </button>
+        <button
+          id="button2"
+          type="button"
+          v-show="ocultar"
+          v-on:click="getPasoSiguiente()"
+          variant="dark"
+          class="boton"
+        >
+          Siguiente
+        </button>
+        <br />
+        <img
+          id="imagenPaso0"
+          src="../assets/TipoAcero.png"
+          v-show="pantallaInicial"
+        />
+        <img
+          id="imagenPaso2"
+          src="../assets/CalculoLambdaRed2.png"
+          v-show="this.paso === 3"
+        />
+        <br />
+        <img
+          id="imagenPaso0"
+          src="../assets/CalcularChi2.png"
+          v-show="this.paso === 5"
+          class="imagen2"
+        />
+      </div>
     </div>
-    <div class="formulas">
-      <h4>Formulas:</h4>
-      <img
-        id="imagenPaso3"
-        src='../assets/CurvaPandeo.png'
-        v-show="this.paso===4"
-        class="curvaPandeo"
-      />
-      <br>
-      <img
-        id="imagenPaso0"
-        src='../assets/CalculoFyD.png'
-        v-show="pantallaInicial"
-        class="imagen"
-      />
-      <img
-        id="imagenPaso0"
-        src='../assets/CalculoLk.png'
-        v-if="hover0 && this.paso!==1 || this.paso===1"
-        class="imagen"
-      />
-      <img
-        id="imagenPaso1"
-        src='../assets/CalculoLambda.png'
-        v-if="hover1 && this.paso!==2 || this.paso===2"
-        class="imagen"
-      />
-      <img
-        id="imagenPaso2"
-        src='../assets/CalculoLambdaRed.png'
-        v-if="hover2 && this.paso!==3 || this.paso===3"
-        class="imagen"
-      />
-      <img
-        id="imagenPaso4"
-        src='../assets/CalcularChi.png'
-        v-if="hover4 && this.paso!==5 || this.paso===5"
-        class="imagen2"
-      />
-      <img
-        id="imagenPaso5"
-        src='../assets/CalculoNbrd.png'
-        v-if="hover5 && this.paso!==6 || this.paso===6"
-        class="imagen"
-      />
-      <img
-        id="imagenPaso6"
-        src='../assets/CalculoInteraccion.png'
-        v-if="hover6 && this.paso!==7 || this.paso===7"
-        class="imagen"
-      />
-    </div>
-    <div class="centro">
-      <h4 class="titulo">Desarrollo paso a paso</h4>
-      {{ nextPaso["texto"] }}
-      {{ nextPaso["resultado0"] }}
-      {{ nextPaso["resultado1"] }}
-      <br/>
-      <button
-        id="button4"
-        type="button"
-        v-show="ocultar2"
-        v-on:click="getPasoAnterior()"
-        variant="dark"
-        class="botton"
-      >
-      Anterior
-      </button>
-      <button
-        id="button2"
-        type="button"
-        v-show="ocultar"
-        v-on:click="getPasoSiguiente()"
-        variant="dark"
-        class="boton"
-      >
-      Siguiente
-      </button>
-      <br/>
-      <img
-        id="imagenPaso0"
-        src='../assets/TipoAcero.png'
-        v-show="pantallaInicial"
-      />
-      <img
-        id="imagenPaso2"
-        src='../assets/CalculoLambdaRed2.png'
-        v-show="this.paso===3"
-      />
-      <br/>
-      <img
-        id="imagenPaso0"
-        src='../assets/CalcularChi2.png'
-        v-show="this.paso===5"
-        class="imagen2"
-      />
-    </div>
-    </div>
-    <p></p>
     <div class="abajo">
       <table class="table" id="tablaContenido">
         <thead>
           <tr>
             <th></th>
-            <th @mouseover="hover0=true" @mouseleave="hover0 = false">Lₖ (mm)</th>
-            <th @mouseover="hover1=true" @mouseleave="hover1 = false">λmec</th>
-            <th @mouseover="hover2=true" @mouseleave="hover2 = false">λreducida</th>
+            <th @mouseover="hover0 = true" @mouseleave="hover0 = false">
+              Lₖ (mm)
+            </th>
+            <th @mouseover="hover1 = true" @mouseleave="hover1 = false">
+              λmec
+            </th>
+            <th @mouseover="hover2 = true" @mouseleave="hover2 = false">
+              λreducida
+            </th>
             <th>curva</th>
-            <th @mouseover="hover4=true" @mouseleave="hover4 = false">χ</th>
-            <th @mouseover="hover5=true" @mouseleave="hover5 = false">Nb,Rd</th>
-            <th @mouseover="hover6=true" @mouseleave="hover6 = false">interac.</th>
+            <th @mouseover="hover4 = true" @mouseleave="hover4 = false">χ</th>
+            <th @mouseover="hover5 = true" @mouseleave="hover5 = false">
+              Nb,Rd
+            </th>
+            <th @mouseover="hover6 = true" @mouseleave="hover6 = false">
+              interac.
+            </th>
           </tr>
         </thead>
         <tbody>
@@ -414,66 +421,63 @@ export default{
 </script>
 
 <style scoped>
-.app{
-    text-align: center;
-    align-content: center;
+.app {
+  text-align: center;
+  align-content: center;
 }
-.table{
-    font-size: 1rem;
-    margin-left: auto;
-    margin-right: auto;
-    border-spacing:2cm;
-    border: 1px solid;
+.table {
+  font-size: 1rem;
+  margin-left: auto;
+  margin-right: auto;
+  border-spacing: 2cm;
+  border: 1px solid;
 }
-.supizq{
-    float: left;
-    width: 25%;
-    text-align: left;
-    margin-left: 30px;
-    height: 400px;
-    background-color: azure;
+.supizq {
+  float: left;
+  width: 25%;
+  text-align: left;
+  margin-left: 30px;
+  height: 400px;
+  background-color: aliceblue;
 }
-.supder{
-    float: left;
-    width: 54%;
-    text-align: left;
-    white-space:pre-line;
-    height: 400px;
-    margin-left: 30px;
-}
-.abajo{
+.abajo {
+  margin-top: 0%;
   float: left;
   width: 100%;
+  background-color: aliceblue;
 }
-.titulo{
+.titulo {
   text-align: center;
   margin-top: 0px;
   margin-bottom: 0px;
 }
-.imagen{
+.imagen {
   width: 160px;
   height: auto;
   margin-top: 10%;
   float: center;
 }
-.centro{
-  white-space:pre-line;
+.centro {
+  white-space: pre-line;
   background-color: aliceblue;
-  text-align:center;
+  text-align: center;
   height: 400px;
   margin: 10px;
   text-align: justify;
 }
-.formulas{
+.formulas {
   width: 30%;
   height: 400px;
-  background-color: aqua;
+  background-color: aliceblue;
   float: right;
 }
-.curvaPandeo{
+.curvaPandeo {
   width: 420px;
 }
-.boton{
+.boton {
   float: right;
+}
+.superior {
+  background-color: aliceblue;
 }
 </style>
