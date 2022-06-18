@@ -372,8 +372,8 @@ def getPandeoCompresion():
         xy = calcularXy(curvaY, lambdaRedy)
         xz = calcularXz(curvaZ, lambdaRedz)
 
-        Ncry = (3.1416 / lambday)**2 * a * 21000
-        Ncrz = (3.1416 / lambdaz)**2 * a * 21000
+        #Ncry = (3.1416 / lambday)**2 * a * 21000
+        #Ncrz = (3.1416 / lambdaz)**2 * a * 21000
 
         Nbrdy = resN * xy
         Nbrdz = resN * xz
@@ -390,8 +390,8 @@ def getPandeoCompresion():
         lambdaRedz = (round(lambdaRedz, 2))
         xy = (round(xy, 2))
         xz = (round(xz, 2))
-        Ncry = (round(Ncry, 1))
-        Ncrz = (round(Ncrz, 1))
+        #Ncry = (round(Ncry, 1))
+        #Ncrz = (round(Ncrz, 1))
         Nbrdy = (round(Nbrdy, 1))
         Nbrdz = (round(Nbrdz, 1))
         interacy = (round(interacy, 2))
@@ -399,8 +399,7 @@ def getPandeoCompresion():
 
         response_object['message'] ='Data added!'
         return jsonify({0 : Lky, 1 : Lkz, 2 : lambday, 3 : lambdaz, 4 : lambdaRedy, 
-        5 : lambdaRedz, 6 : curvaY, 7 : curvaZ, 8 : xy, 9 : xz, 10 : Ncry , 
-        11 : Ncrz, 12 : Nbrdy, 13 : Nbrdz, 14  : interacy, 15 : interacz})
+        5 : lambdaRedz, 6 : curvaY, 7 : curvaZ, 8 : xy, 9 : xz, 10 : Nbrdy, 11 : Nbrdz, 12  : interacy, 13 : interacz})
     else:
         
         response_object = {'status':'success'}
@@ -426,7 +425,7 @@ def getPanCom0():
         Lky = L * By * 1000
         Lkz = L * Bz * 1000
 
-        texto = 'Esto es un texto de prueba.\n Prueba'
+        texto = 'Esto es un texto de prueba.\n Pruebaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa'
         return jsonify({'texto' : texto, 'resultado0' : Lky, 'resultado01' : "Lky : ",  'resultado1' : Lkz, 'resultado11' : "Lkz : "})
     else:
         
@@ -599,8 +598,8 @@ def getPanCom4():
         return jsonify(response_object)
 
 @cross_origin
-@app.route("/PanCom5", methods=['POST', 'GET'])
-def getPanCom5():
+@app.route("/PanComXXXX", methods=['POST', 'GET'])
+def getPanComX():
     if request.method == "POST":        
         response_object = {'status':'success'}
         post_data = request.get_json()
@@ -647,9 +646,10 @@ def getPanCom5():
         response_object['message'] ='Data added!'
         return jsonify(response_object)
 
+
 @cross_origin
-@app.route("/PanCom6", methods=['POST', 'GET'])
-def getPanCom6():
+@app.route("/PanCom5", methods=['POST', 'GET'])
+def getPanCom5():
     if request.method == "POST":        
         response_object = {'status':'success'}
         post_data = request.get_json()
@@ -712,8 +712,8 @@ def getPanCom6():
         return jsonify(response_object)
 
 @cross_origin
-@app.route("/PanCom7", methods=['POST', 'GET'])
-def getPanCom7():
+@app.route("/PanCom6", methods=['POST', 'GET'])
+def getPanCom6():
     if request.method == "POST":        
         response_object = {'status':'success'}
         post_data = request.get_json()
