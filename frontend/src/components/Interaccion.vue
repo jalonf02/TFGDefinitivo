@@ -75,12 +75,13 @@
           <option>3</option>
           <option>4</option>
         </select>
-        <p>Seleccione la clase de flexocompresión según la tabla:</p>
+        <p>Seleccione la clase de flexocompresión:</p>
         <select v-model="selected.clase">
           <option>1</option>
           <option>2</option>
           <option>3</option>
         </select>
+        <p>
         <button
           id="button-2"
           type="button"
@@ -89,6 +90,7 @@
         >
           Introducir Datos
         </button>
+        </p>
       </form>
       <form v-show="informacionIntroducida3">
           <p>Introduzca L() m:</p>
@@ -118,15 +120,16 @@
         <input placeholder="C₁" v-model="selected.C1" />
       <p>Introduzca el valor de βₗₜ, por defecto será 1:</p>
         <input placeholder="βₗₜ" v-model="selected.Blt" />
-        <p></p>
+        <p>
         <button
           id="button-2"
           type="button"
           v-on:click="cambioInformacion4()"
           variant="dark"
         >
-          Iniciar
+          Introducir Datos
         </button>
+        </p>
         </form>
         <form v-show="informacionIntroducida5">
       <p>Introduzca el valor de Cmy:</p>
@@ -135,7 +138,7 @@
         <input placeholder="C₁" v-model="selected.Cmz" />
       <p>Introduzca el valor de Cmlt:</p>
         <input placeholder="βₗₜ" v-model="selected.Cmlt" />
-        <p></p>
+        <p>
         <button
           id="button-2"
           type="button"
@@ -144,29 +147,8 @@
         >
           Iniciar
         </button>
+        </p>
         </form>
-      </div>
-            <div class="formulas">
-        <h4>Formulas:</h4>
-        <img
-          id="imagenPaso3"
-          src="../assets/CurvaPandeo.png"
-          v-show="this.paso === 4"
-          class="curvaPandeo"
-        />
-        <br />
-        <img
-          id="imagenPaso0"
-          src="../assets/CalculoFyD.png"
-          v-show="pantallaInicial"
-          class="imagen"
-        />
-      </div>
-      <div class="centro">
-        <h4 class="titulo">Desarrollo paso a paso</h4>
-        {{ nextPaso["texto"] }}
-        {{ nextPaso["resultado0"] }}
-        {{ nextPaso["resultado1"] }}
         <br/>
         <button
           id="button4"
@@ -188,11 +170,74 @@
         >
           Siguiente
         </button>
+      </div>
+            <div class="formulas">
+        <h4>Formulas:</h4>
+        <img
+        id="Tabla"
+        src='../assets/TablaPerfiles.png'
+        v-show="informacionIntroducida2"
+        class="tablaPerfiles"
+        />
+        <img
+          id="TablaC1"
+          src="../assets/VistaPL/TablaC1.png"
+          v-show="informacionIntroducida4"
+          class = "tablaPerfiles"
+        />
+        <img
+          id="TablaCmi"
+          src="../assets/VistaInteracciones/TablaCmi.png"
+          v-show="informacionIntroducida5"
+          class = "coeficientesK"
+        />
+        <img
+          id="imagenPaso1.1"
+          src="../assets/VistaInteracciones/CoeficientesK1.png"
+          v-show="this.paso === 1"
+          class="coeficientesK"
+        />
+        <img
+          id="imagenPaso1.2"
+          src="../assets/VistaInteracciones/CoeficientesK2.png"
+          v-show="this.paso === 2"
+          class="coeficientesK"
+        />
+        <img
+          id="imagenPaso2"
+          src="../assets/VistaInteracciones/InteraccionY.png"
+          v-show="this.paso === 3"
+          class="imagen2"
+        />
+        <br />
+        <img
+          id="imagenInicial"
+          src="../assets/CalculoFyD.png"
+          v-show="pantallaInicial"
+          class="imagen"
+        />
+        <img
+          id="imagenPaso2"
+          src="../assets/VistaInteracciones/InteraccionZ.png"
+          v-show="this.paso === 3"
+          class="imagen2"
+        />
+      </div>
+      <div class="centro">
+        <h4 class="titulo">Desarrollo paso a paso</h4>
+        {{ nextPaso["texto"] }}
+        {{ nextPaso["resultado0"] }}
+        {{ nextPaso["resultado1"] }}
         <br/><br/>
         <img
           id="imagenPaso0"
           src="../assets/TipoAcero.png"
           v-show="pantallaInicial"
+        />
+        <img
+          id="imagenPaso0"
+          src="../assets/VistaPL/TablaK2.png"
+          v-show="informacionIntroducida4"
         />
       </div>
     </div>
@@ -322,43 +367,85 @@ export default{
         this.nextPaso['resultado01'] = ''
         this.nextPaso['resultado1'] = ''
         this.nextPaso['resultado11'] = ''
-        this.nextPaso['texto'] = 'El tipo de acero seleccionado es ' + this.selected.tipoAcero + '.\n' +
-        'El coeficiente seleccionado es ' + this.selected.coeficiente + '.\n' +
-        'El perfil seleccionado es ' + this.selected.name + '.\n\n'
+        this.nextPaso['texto'] =
+          'El tipo de acero seleccionado es ' +
+          this.selected.tipoAcero +
+          '.\n' +
+          'El coeficiente seleccionado es ' +
+          this.selected.coeficiente +
+          '.\n' +
+          'El perfil seleccionado es ' +
+          this.selected.name +
+          '.\n\n' +
+          'A continuación, debemos introducir los esfuerzos en las secciones y la clase correspondiente.\n\n' +
+          'La clase viene dada por la tabla según el perfil. Además se debe introducir la clase a flexocompresión correspondiente.\n\n' +
+          'Siguiendo la tabla, vemos que las casillas sombreadas significan que un perfil nunca podrá ser de esa clase y el asterisco indica ' +
+          'que la sección no cambia para los valores de Ned superiores a esa clase.\n\n'
       }
       return false
     },
     cambioInformacion2: function () {
-      if (this.selected.resN !== '' && this.selected.clase !== '' && this.selected.resMy !== '' && this.selected.resMz !== '') {
+      let aux1 = this.selected.resN.replace(/,/g, '.')
+      let aux2 = this.selected.resMy.replace(/,/g, '.')
+      let aux3 = this.selected.resMz.replace(/,/g, '.')
+      if ((this.selected.resN !== '' && !isNaN(aux1)) && this.selected.clase !== '' && (this.selected.resMy !== '' && !isNaN(aux2)) &&
+      (this.selected.resMz !== '' && !isNaN(aux3))) {
         this.informacionIntroducida2 = false
         this.informacionIntroducida3 = true
-        this.nextPaso['texto'] = 'Texto de prueba 2.'
+        this.nextPaso['texto'] = 'Ahora, para el cálculo de pandeo de barras a compresión será necesario añadir los siguientes valores: \n\n' +
+        'Primero, debemos introducir tanto la longitud de la barra (L) en metros.' +
+        ' Además, serán necesarios los coeficientes β tanto para el eje y como  para el eje x.\n '
+      } else {
+        this.$alert('Valores introducidos incorrectos.')
       }
       return false
     },
     cambioInformacion3: function () {
-      if (this.selected.L !== '' && this.selected.By !== '' && this.selected.Bz !== '') {
+      let aux1 = this.selected.L.replace(/,/g, '.')
+      let aux2 = this.selected.By.replace(/,/g, '.')
+      let aux3 = this.selected.Bz.replace(/,/g, '.')
+      if ((this.selected.L !== '' && !isNaN(aux1)) && (this.selected.By !== '' && !isNaN(aux2)) && (this.selected.Bz !== '' && !isNaN(aux3))) {
         this.informacionIntroducida3 = false
         this.informacionIntroducida4 = true
-        this.nextPaso['texto'] = 'Texto de prueba 3.'
+        this.nextPaso['texto'] = 'A continuación, será necesario introducir los valores de k₂, C₁, βₗₜ.\n\n' +
+        'k₂ dependerá de la posición de la carga en la viga, como se indica en la tabla mostrada.\n\n' +
+        'C₁ es un coeficiente que se debe elegir según la tabla. Su valor por defecto será 1.0.\n\n' +
+        'βₗₜ es un parametro adimensional, su valor por defecto será 1.0.\n\n'
+      } else {
+        this.$alert('Valores introducidos incorrectos.')
       }
       return false
     },
     cambioInformacion4: function () {
-      if (this.selected.L !== '' && this.selected.By !== '' && this.selected.Bz !== '') {
+      let aux1 = this.selected.C1.replace(/,/g, '.')
+      let aux2 = this.selected.Blt.replace(/,/g, '.')
+      if ((this.selected.C1 !== '' && !isNaN(aux1)) && (this.selected.Blt !== '' && !isNaN(aux2)) && this.selected.k2 !== '') {
         this.informacionIntroducida4 = false
         this.informacionIntroducida5 = true
-        this.nextPaso['texto'] = 'Texto de prueba 4.'
+        this.nextPaso['texto'] = 'Por último, se deben introducir los valores Cm,i.\n\n' +
+        'Estos valores no pueden ser superiores a 1, ni inferiores a 0.4.\n\n'
+      } else {
+        this.$alert('Valores introducidos incorrectos.')
       }
       return false
     },
     cambioInformacion5: function () {
-      if (this.selected.Cmy !== '' && this.selected.Cmz !== '' && this.selected.Cmlt !== '') {
+      let aux1 = this.selected.Cmy.replace(/,/g, '.')
+      let aux2 = this.selected.Cmz.replace(/,/g, '.')
+      let aux3 = this.selected.Cmlt.replace(/,/g, '.')
+      aux1 = parseFloat(aux1)
+      aux2 = parseFloat(aux2)
+      aux3 = parseFloat(aux3)
+      if ((this.selected.Cmy !== '' && aux1 >= 0.4 && aux1 <= 1.0) && (this.selected.Cmz !== '' && aux2 >= 0.4 && aux2 <= 1.0) &&
+        (this.selected.Cmlt !== '' && aux3 >= 0.4 && aux3 <= 1.0)) {
         this.informacionIntroducida5 = false
         this.informacionIntroducida = false
         this.ocultar = true
         this.getInteraccion()
-        this.nextPaso['texto'] = 'Texto de prueba 5.'
+        this.nextPaso['texto'] = 'Ahora que ya se han introducido todos los datos, puedes ver los resultados en la tabla.\n\n' +
+        'Para ver una ejecución por pasos utilice el botón siguiente, en caso de querer introducir nuevos datos rellene nuevamente el formulario.\n'
+      } else {
+        this.$alert('Recuerde que estos valores no pueden ser superiores a 1, ni inferiores a 0.4.')
       }
       return false
     },
@@ -425,62 +512,40 @@ export default{
       console.log(this.paso)
       switch (this.paso) {
         case 0:
-          this.nextPaso['resultado0'] = 'Lₖ para el eje y = ' + this.pandeo[0] + ' mm.'
-          this.nextPaso['resultado1'] = 'Lₖ para el eje z = ' + this.pandeo[1] + ' mm.'
-          this.nextPaso['texto'] = 'Paso 1: \n\n' +
-          'Para calcular la resistencia a pandeo necesitaremos realizar diversos cálculos primero. \n' +
-          'El primer paso sera calcular el valor de Lₖ en mm para ambos ejes.\n ' +
-          'Para ello, utilizamos la formula que se muestra a la derecha, donde se utilizara el coeficiente β elegido para cada eje para calcular su Lₖ correspondiente.\n'
+          this.nextPaso['resultado0'] = 'Coeficiente Kyy = ' + this.interaccion['Kyy'] + '.'
+          this.nextPaso['resultado1'] = 'Coeficiente Kzz = ' + this.interaccion['Kzz'] + '.'
+          this.nextPaso['texto'] = 'Paso 1.1 Coeficientes K: \n\n' +
+          'En este paso calcularemos los coeficientes Kyy y Kzz. \n' +
+          'Para ello, necesitaremos saber la clase introducida según la tabla, que en este caso es ' + this.selected.clase + '.\n ' +
+          'Una vez sabemos la clase, podemos seguir las formulas mostradas para hallar Kyy y Kzz.\n\n' +
+          'Ned, Cmy, Cmz y Cmlt son datos introducidos previamente.\n' +
+          'Por otro lado, necesitaremos también la esbeltez reducida para ambos ejes y el Nb,rd de ambos ejes también.\n' +
+          'En caso de querer comprobar como se obtienen, puedes regresar al apartado de pandeo por compresión.\n\n'
           this.ocultar2 = false
           break
         case 1:
-          this.nextPaso['resultado0'] = 'λmec para el eje y = ' + this.pandeo[2] + '.'
-          this.nextPaso['resultado1'] = 'λmec para el eje z = ' + this.pandeo[3] + '.'
-          this.nextPaso['texto'] = 'Paso 2: \n\n' +
-          'A continuación, calcularemos el valor de la Esbeltez mecánica.\n\n' +
-          'Para realizar este calculoe es necesario el valor de Lₖ, calculado en el paso anterior y el valor i de cada eje, que se obtiene de la tabla del perfil seleccionado.'
+          this.nextPaso['resultado0'] = 'Coeficiente Kyz = ' + this.interaccion['Kyz'] + '.'
+          this.nextPaso['resultado1'] = 'Coeficiente Kzy = ' + this.interaccion['Kzy'] + '.'
+          this.nextPaso['texto'] = 'Paso 1.2 Coeficientes K: \n\n' +
+          'En este paso calcularemos los coeficientes Kyz y Kzy. \n' +
+          'Para ello, necesitaremos saber la clase introducida según la tabla, que en este caso es ' + this.selected.clase + '.\n ' +
+          'Una vez sabemos la clase, podemos seguir las formulas mostradas para hallar Kyz y Kzy.\n\n' +
+          'Ned, Cmy, Cmz y Cmlt son datos introducidos previamente.\n' +
+          'Por otro lado, necesitaremos también la esbeltez reducida para ambos ejes y el Nb,rd de ambos ejes también.\n' +
+          'En caso de querer comprobar como se obtienen, puedes regresar al apartado de pandeo por compresión.\n\n'
           this.ocultar2 = true
-          break
-        case 2:
-          this.nextPaso['resultado0'] = 'λreducida para el eje y = ' + this.pandeo[4] + '.'
-          this.nextPaso['resultado1'] = 'λreducida para el eje z = ' + this.pandeo[5] + '.'
-          this.nextPaso['texto'] = 'Paso 3: \n\n' +
-          'Una vez hemos calculado la Esbeltez mecánica podemos calcular la esbeltez reducida.\n\n' +
-          'En este caso, sería necesario realizar el cálculo previo de λE. Para ello se utiliza la formula mostrada en la parte inferior.\n' +
-          'Una vez realizamos este calculo, utilizando la formula del apartado de formulas obtendriamos el resultado. ' +
-          'Este resultado tiene que ser menor que 2 en ambos casos, en caso de no serlo, se deben introducir nuevos valores para satisfacer esta condición.'
-          break
-        case 3:
-          this.nextPaso['resultado0'] = 'La curva de pandeo para el eje y es: ' + this.pandeo[6] + '.'
-          this.nextPaso['resultado1'] = 'La curva de pandeo para el eje z es: ' + this.pandeo[7] + '.'
-          this.nextPaso['texto'] = 'Paso 4:\n\n' +
-          'En caso de que se cumpla la condición previa, ahora se elije la curva de pandeo.\n' +
-          'La curva de pandeo depende del tipo de Acero elegido, que en este caso es ' + this.selected['tipoAcero'] +
-          ' por lo que las curvas son las siguientes: \n'
-          break
-        case 4:
-          this.nextPaso['resultado0'] = 'χ para el eje y = ' + this.pandeo[8] + '.'
-          this.nextPaso['resultado1'] = 'χ para el eje z = ' + this.pandeo[9] + '.'
-          this.nextPaso['texto'] = 'Paso 5: \n\n' +
-          'Para calcular χ primero necesitamos el coeficiente de imperfección, que viene dado por la tabla inferior.\n' +
-          'Una vez lo tengamos primero hayamos Φ siguiendo la formula, y con esto ya podemos calcular χ para ambos ejes.'
-          break
-        case 5:
-          this.nextPaso['resultado0'] = 'Nb,Rd para el eje y = ' + this.pandeo[10] + ' kN.'
-          this.nextPaso['resultado1'] = 'Nb,Rd para el eje z = ' + this.pandeo[11] + ' kN.'
-          this.nextPaso['texto'] = 'Paso 6: \n\n' +
-          'Ahora que ya hemos calculado χ podemos calcular la resistencia a pandeo.\n' +
-          'Para realizar este calculo, además necesitaremos los datos elegidos al principio, dados por nuestra clase de acero ' + this.selected.tipoAcero +
-          ' y por nuestro coeficiente ' + this.selected.coeficiente + '.'
           this.ocultar = true
           break
-        case 6:
-          this.nextPaso['resultado0'] = 'La interacción en el eje y = ' + this.pandeo[12] + '.'
-          this.nextPaso['resultado1'] = 'La interacción en el eje z = ' + this.pandeo[13] + '.'
-          this.nextPaso['texto'] = 'Paso 7: \n\n' +
-          'Por último, para calcular la interacción y verificar que todo es correcto necesitamos que el resultado sea menor que 1.\n' +
-          'Para esta formula utilizaremos el esfuerzo axil (Ned) ' + this.selected.resNecN + ' kN.\n' +
-          'Con esto podemos calcular la intearacción y verificar que el resultado es correcto.'
+        case 2:
+          this.nextPaso['resultado1'] = 'Pandeo en el plano debil (x-y) del perfil (eje z) = ' + this.interaccion['interacFinalZ'] + '.'
+          this.nextPaso['resultado0'] = 'Pandeo en el plano fuerte (x-z) del perfil (eje y) = ' + this.interaccion['interacFinalY'] + '.'
+          this.nextPaso['texto'] = 'Paso 2 Calculo pandeo en el plano debil y fuerte del perfil: \n\n' +
+          'Una vez hemos calculado todos los coeficientes K, podemos calcular las interacciones.\n\n' +
+          'Para ello, utilizaremos la formula correspondiente.\n' +
+          'Los dividendos son datos introducidos en el programa previamente.\n' +
+          'Por otro lado, los divisores, son datos que hemos calculado en los otros apartados, para ver su paso a paso compruebe en el apartado respectivo.\n\n' +
+          'El Nb,Rd lo hayamos en el pandeo lateral, y el Nb,Rd para cada eje es calculado en el pandeo por compresion.\n' +
+          'Por último, la resistencia a flexión en el eje z se calcula en el apartado de resistencias.\n\n'
           this.ocultar = false
           break
       }
@@ -535,19 +600,19 @@ export default{
   margin-bottom: 0px;
 }
 .imagen{
-  width: 200px;
+  width: 60%;
   height: auto;
   margin-top: 5%;
   float: center;
 }
 .imagen2{
-  width: 320px;
+  width: 60%;
   height: auto;
   margin-top: 5%;
   float: center;
 }
 .imagen3{
-  width: 200px;
+  width: 60%;
   height: auto;
   float: right;
 }
@@ -566,12 +631,20 @@ export default{
   float: right;
 }
 .tablaPerfiles{
-  height: 470px;
+  max-height: 88%;
+  max-width: auto;
+  margin-top: 0px;
+  float: center;
+}
+.coeficientesK{
+  max-width: 94%;
+  max-width: auto;
   margin-top: 0px;
   float: center;
 }
 .boton{
   float: right;
+  margin-right: 100px;
 }
 .superior{
   background-color:aliceblue;

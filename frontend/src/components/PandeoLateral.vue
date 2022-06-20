@@ -1,7 +1,7 @@
 <template>
   <div id="app" style="margin-top: 0px">
     <div class = "superior">
-    <h3 style="margin-bottom: 0px;">Calculo de resistencias en tipos de acero</h3>
+    <h3 style="margin-bottom: 0px;">Calculo de pandeo lateral</h3>
     <div class="supizq">
       <form v-show="!informacionIntroducida">
         <p>Selección del tipo de acero y coeficiente:</p>
@@ -53,6 +53,7 @@
         <input placeholder="C₁" v-model="selected.C1" />
       <p>Introduzca el valor de βₗₜ, por defecto será 1:</p>
         <input placeholder="βₗₜ" v-model="selected.Blt" />
+        <p>
         <button
           id="button-2"
           type="button"
@@ -61,13 +62,14 @@
         >
           Introducir Datos
         </button>
+        </p>
       </form>
       <form v-show="informacionIntroducida3">
         <p>Introduzca Ned:</p>
         <input placeholder="Ned" v-model="selected.Ned" />
         <p>Introduzca Myed:</p>
         <input placeholder="Myed" v-model="selected.Myed" />
-        <p>Seleccione la clase de flexocompresión según la tabla:</p>
+        <p>Seleccione la clase de flexocompresión:</p>
         <select v-model="selected.clase">
           <option>1</option>
           <option>2</option>
@@ -84,87 +86,8 @@
         </button>
       </p>
     </form>
-    </div>
-    <div class="formulas">
-      <h4>Formulas:</h4>
-      <img
-          id="imagenPaso0"
-          src="../assets/VistaPL/TablaC1.png"
-          v-show="informacionIntroducida2"
-          class = "tablaPerfiles"
-        />
-      <img
-          id="TablaPerfiles"
-          src="../assets/TablaPerfiles.png"
-          v-show="informacionIntroducida3"
-          class = "tablaPerfiles"
-      />
-      <img
-        id="imagenPaso1"
-        src='../assets/VistaPL/CalcularMcr.png'
-        v-if="hover1 && this.paso!==2 || this.paso===2"
-        class="imagen2"
-      />
-      <br>
-      <img
-        id="imagenPaso4"
-        src='../assets/VistaPL/CalcularChi2.png'
-        v-if="this.paso===5"
-        class="imagen"
-      />
-      <img
-        id="imagenPaso0"
-        src='../assets/VistaPL/CalcularLc.png'
-        v-if="hover0 && this.paso!==1 || this.paso===1"
-        class="imagen"
-      />
-      <img
-        id="imagenPaso1"
-        src='../assets/VistaPL/TablaEG.png'
-        v-if="hover1 && this.paso!==2 || this.paso===2"
-      />
-      <img
-        id="imagenPaso2"
-        src='../assets/VistaPL/CalcularEsbPandeoLateral.png'
-        v-if="hover2 && this.paso!==3 || this.paso===3"
-        class="imagen"
-      />
-      <img
-        id="imagenPaso2"
-        src='../assets/VistaPL/EleccionCurvaPandeo.png'
-        v-if="this.paso===4"
-      />
-      <img
-        id="imagenPaso4"
-        src='../assets/CalcularChi.png'
-        v-if="this.paso===5"
-        class="imagen2"
-      />
-      <img
-        id="imagenPaso5"
-        src='../assets/VistaPL/CalcularMbrd.png'
-        v-if="hover5 && this.paso!==6 || this.paso===6"
-        class="imagen2"
-      />
-      <img
-        id="imagenPaso6"
-        src='../assets/VistaPL/InteraccionPandeoLateral.png'
-        v-if="hover6 && this.paso!==7 || this.paso===7"
-        class="imagen"
-      />
-      <img
-        id="imagenPaso7"
-        src='../assets/VistaPL/CalcularLcLim.png'
-        v-if="this.paso===8"
-        class="imagen2"
-      />
-    </div>
-    <div class="centro">
-      <h4 class="titulo">Desarrollo paso a paso</h4>
-      {{ nextPaso["texto"] }}
-      {{ nextPaso["resultado0"] }}
-      <br/>
-      <button
+    <br/>
+    <button
         id="button4"
         type="button"
         v-show="ocultar2"
@@ -184,19 +107,96 @@
       >
         Siguiente
       </button>
+    </div>
+    <div class="formulas">
+      <h4>Formulas:</h4>
+      <img
+          id="imagenPaso0"
+          src="../assets/VistaPL/TablaC1.png"
+          v-show="informacionIntroducida2"
+          class = "tablaPerfiles"
+        />
+      <img
+          id="TablaPerfiles"
+          src="../assets/TablaPerfiles.png"
+          v-show="informacionIntroducida3"
+          class = "tablaPerfiles"
+      />
+      <img
+        id="imagenPaso1"
+        src='../assets/VistaPL/CalcularMcr.png'
+        v-if="this.paso===2"
+        class="imagen2"
+      />
+      <img
+        id="imagenPaso4"
+        src='../assets/VistaPL/CalcularChi2.png'
+        v-if="this.paso===5"
+        class="imagen"
+      />
+      <br>
+      <img
+        id="imagenPaso0"
+        src='../assets/VistaPL/CalcularLc.png'
+        v-if="this.paso===1"
+        class="imagen"
+      />
+      <img
+        id="imagenPaso1"
+        src='../assets/VistaPL/TablaEG.png'
+        v-if="this.paso===2"
+      />
+      <img
+        id="imagenPaso2"
+        src='../assets/VistaPL/CalcularEsbPandeoLateral.png'
+        v-if="this.paso===3"
+        class="imagen"
+      />
+      <img
+        id="imagenPaso2"
+        src='../assets/VistaPL/EleccionCurvaPandeo.png'
+        v-if="this.paso===4"
+      />
+      <img
+        id="imagenPaso4"
+        src='../assets/CalcularChi.png'
+        v-if="this.paso===5"
+        class="imagen2"
+      />
+      <img
+        id="imagenPaso5"
+        src='../assets/VistaPL/CalcularMbrd.png'
+        v-if="this.paso===6"
+        class="imagen2"
+      />
+      <img
+        id="imagenPaso6"
+        src='../assets/VistaPL/InteraccionPandeoLateral.png'
+        v-if="this.paso===7"
+        class="imagen"
+      />
+      <img
+        id="imagenPaso7"
+        src='../assets/VistaPL/CalcularLcLim.png'
+        v-if="this.paso===8"
+        class="imagen2"
+      />
+    </div>
+    <div class="centro">
+      <h4 class="titulo">Desarrollo paso a paso</h4>
+      {{ nextPaso["texto"] }}
+      {{ nextPaso["resultado0"] }}
       <br/>
       <br/>
       <img
           id="imagenPaso0"
           src="../assets/TipoAcero.png"
           v-show="pantallaInicial"
-          class = "imagen2"
         />
       <img
           id="imagenPaso0"
           src="../assets/VistaPL/TablaK2.png"
           v-show="informacionIntroducida2"
-          class = "imagen2"
         />
     </div>
     </div>
@@ -278,13 +278,6 @@ export default {
       excel2: {},
       excel3: {},
       nextPaso: [],
-      hover0: false,
-      hover1: false,
-      hover2: false,
-      hover3: false,
-      hover4: false,
-      hover5: false,
-      hover6: false,
       paso: 0,
       informacionIntroducida: false,
       ocultar: false,
@@ -315,26 +308,44 @@ export default {
           '.\n' +
           'El perfil seleccionado es ' +
           this.selected.name +
-          '.\n\n'
+          '.\n\n' +
+        'A continuación, será necesario introducir los valores de k₂, C₁, βₗₜ y L en metros.\n\n' +
+        'k₂ dependerá de la posición de la carga en la viga, como se indica en la tabla mostrada.\n\n' +
+        'C₁ es un coeficiente que se debe elegir según la tabla. Su valor por defecto será 1.0.\n\n' +
+        'βₗₜ es un parametro adimensional, su valor por defecto será 1.0.\n\n' +
+        'L sería la longitud de la barra, su valor debe introducirse en metros.\n'
       }
       return false
     },
     cambioInformacion2: function () {
-      if (this.selected.Blt !== '' && this.selected.L !== '' && this.selected.C1 !== '' && this.selected.K2 !== '') {
+      let aux1 = this.selected.L.replace(/,/g, '.')
+      let aux2 = this.selected.Blt.replace(/,/g, '.')
+      let aux3 = this.selected.C1.replace(/,/g, '.')
+      if ((this.selected.Blt !== '' && !isNaN(aux2)) && (this.selected.L !== '' && !isNaN(aux1)) && (this.selected.C1 !== '' && !isNaN(aux3)) && this.selected.K2 !== '') {
         this.informacionIntroducida2 = false
         this.informacionIntroducida3 = true
-        this.nextPaso['texto'] =
-          'La longitud de barra seleccionada es L = '
+        this.nextPaso['texto'] = 'Primero, introduciremos el esfuerzo axil en kN.\n\n' +
+        'Además será necesario añadir el momento flector respecto al eje y (kNm) y la clase de flexocompresión.\n\n' +
+        'Dicha clase viene dada por la tabla según el perfil y el esfuerzo axil (Ned) elegido.\n\n' +
+        'Siguiendo la tabla, vemos que las casillas sombreadas significan que un perfil nunca podrá ser de esa clase y el asterisco indica ' +
+        'que la sección no cambia para los valores de Ned superiores a esa clase.\n\n'
+      } else {
+        this.$alert('Valores introducidos incorrectos.')
       }
       return false
     },
     cambioInformacion3: function () {
-      if (this.selected.resN !== '' && this.selected.resMy !== '' && this.selected.clase !== '') {
+      let aux1 = this.selected.Ned.replace(/,/g, '.')
+      let aux2 = this.selected.Myed.replace(/,/g, '.')
+      if ((this.selected.Ned !== '' && !isNaN(aux1)) && this.selected.clase !== '' && (this.selected.Myed !== '' && !isNaN(aux2))) {
         this.informacionIntroducida3 = false
         this.informacionIntroducida = false
         this.ocultar = true
         this.getPandeoLateral()
-        this.nextPaso['texto'] = 'Texto de prueba'
+        this.nextPaso['texto'] = 'Ahora que ya se han introducido todos los datos, puedes ver los resultados en la tabla.\n\n' +
+        'Para ver una ejecución por pasos utilice el botón siguiente, en caso de querer introducir nuevos datos rellene nuevamente el formulario.\n'
+      } else {
+        this.$alert('Valores introducidos incorrectos.')
       }
       return false
     },
@@ -506,15 +517,13 @@ export default {
   margin-bottom: 0px;
 }
 .imagen{
-  width: 200px;
+  width: 50%;
   height: auto;
-  margin-top: 5%;
   float: center;
 }
 .imagen2{
-  width: 400px;
+  width: 67%;
   height: auto;
-  margin-top: 5%;
   float: center;
 }
 .centro{
@@ -532,18 +541,21 @@ export default {
   float: right;
 }
 .tablaPerfiles{
-  height: 470px;
+  max-height: 88%;
+  max-width: auto;
   margin-top: 0px;
   float: center;
 }
 .boton{
   float: right;
+  margin-right: 100px;
 }
 .superior{
   background-color:aliceblue;
   height: 550px;
 }
 .curvaPandeo {
-  width: 460px;
+  max-width: 85%;
+  max-height: auto;
 }
 </style>

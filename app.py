@@ -45,17 +45,29 @@ def calcularEsbLim(claseAcero):
     else:
         return 67.9
 
-def calcularCurvaPandeoY(claseAcero):
+def calcularCurvaPandeoY(claseAcero, hdb):
     if claseAcero == 'S450':
-        return "a0"
+        if hdb >1.2:
+            return "a0"
+        else:
+            return "a"
     else:
-        return "a"
+        if hdb >1.2:
+            return "a"
+        else:
+            return "b"
 
-def calcularCurvaPandeoZ(claseAcero):
+def calcularCurvaPandeoZ(claseAcero, hdb):
     if claseAcero == 'S450':
-        return "a0"
+        if hdb >1.2:
+            return "a0"
+        else:
+            return "a"
     else:
-        return "b"
+        if hdb >1.2:
+            return "b"
+        else:
+            return "c"
 
 def calcularXy(curvaPandeoY, lamRedy):
     if curvaPandeoY == "a0":
@@ -210,11 +222,11 @@ def getResistencias():
         claseAcero = post_data["tipoAcero"]
         coeficiente = float(post_data["coeficiente"])
         fCompr = int(post_data["clase"])
-        Ned = int(post_data["resN"])
-        Myed = float(post_data["resMy"])
-        Mzed = float(post_data["resMz"])
-        Vyed = float(post_data["Vyed"])
-        Vzed = float(post_data["Vzed"])
+        Ned = float(post_data["resN"].replace(',','.'))
+        Myed = float(post_data["resMy"].replace(',','.'))
+        Mzed = float(post_data["resMz"].replace(',','.'))
+        Vyed = float(post_data["Vyed"].replace(',','.'))
+        Vzed = float(post_data["Vzed"].replace(',','.'))
 
 
         df = pd.read_excel('Excel.xlsx', header = None,  sheet_name='IPE', skiprows=6, usecols = "B:AP")
@@ -313,13 +325,13 @@ def getPandeoLateral():
         tipoAce = post_data["name"]
         claseAcero = post_data["tipoAcero"]
         coeficiente = float(post_data["coeficiente"])
-        Ned = float(post_data["Ned"])
-        L = float(post_data["L"])
-        Blt = float(post_data["Blt"])
-        C1 = float(post_data["C1"])
-        k2 = float(post_data["K2"])
+        Ned = float(post_data["Ned"].replace(',','.'))
+        L = float(post_data["L"].replace(',','.'))
+        Blt = float(post_data["Blt"].replace(',','.'))
+        C1 = float(post_data["C1"].replace(',','.'))
+        k2 = float(post_data["K2"].replace(',','.'))
         fCompr = int(post_data["clase"])
-        Myed = float(post_data["Myed"])
+        Myed = float(post_data["Myed"].replace(',','.'))
 
         E = 210
         G = 80
@@ -414,10 +426,10 @@ def getPandeoCompresion():
         tipoAce = post_data["name"]
         claseAcero = post_data["tipoAcero"]
         coeficiente = float(post_data["coeficiente"])       
-        L = float(post_data["L"])
-        By = float(post_data["By"])
-        Bz = float(post_data["Bz"])
-        resNecN = float(post_data["resNecN"])
+        L = float(post_data["L"].replace(',','.'))
+        By = float(post_data["By"].replace(',','.'))
+        Bz = float(post_data["Bz"].replace(',','.'))
+        resNecN = float(post_data["resNecN"].replace(',','.'))
 
         df = pd.read_excel('Excel.xlsx', header = None,  sheet_name='IPE', skiprows=6, usecols = "B:AP")
         is_TipoAcero = df.loc[:, 1] == tipoAce
@@ -427,7 +439,9 @@ def getPandeoCompresion():
         a = df_TipoAcero.iloc[0][8]
         iz = df_TipoAcero.iloc[0][27]
         iy = df_TipoAcero.iloc[0][22]
-        
+        b = df_TipoAcero.iloc[0][4]
+        h = df_TipoAcero.iloc[0][3]
+        hdb = h/b
         Fyd = calcularFyD(claseAcero, coeficiente)
         resN = calcularResN(Fyd, a)
         
@@ -439,8 +453,8 @@ def getPandeoCompresion():
 
         esbLim = calcularEsbLim(claseAcero)
 
-        curvaY = calcularCurvaPandeoY(claseAcero)
-        curvaZ = calcularCurvaPandeoZ(claseAcero)
+        curvaY = calcularCurvaPandeoY(claseAcero, hdb)
+        curvaZ = calcularCurvaPandeoZ(claseAcero, hdb)
 
         lambdaRedy = lambday / esbLim
         lambdaRedz = lambdaz / esbLim
@@ -493,19 +507,19 @@ def getInteraccion():
         tipoAce = post_data["name"]
         claseAcero = post_data["tipoAcero"]
         coeficiente = float(post_data["coeficiente"])       
-        L = float(post_data["L"])
-        By = float(post_data["By"])
-        Bz = float(post_data["Bz"])
-        Ned = float(post_data["Ned"])
-        Cmy = float(post_data["Cmy"])
-        Cmz = float(post_data["Cmz"])
-        CmLT = float(post_data["Cmlt"])
+        L = float(post_data["L"].replace(',','.'))
+        By = float(post_data["By"].replace(',','.'))
+        Bz = float(post_data["Bz"].replace(',','.'))
+        Ned = float(post_data["Ned"].replace(',','.'))
+        Cmy = float(post_data["Cmy"].replace(',','.'))
+        Cmz = float(post_data["Cmz"].replace(',','.'))
+        CmLT = float(post_data["Cmlt"].replace(',','.'))
         fCompr = int(post_data["clase"])
-        Mzed = float(post_data["Mzed"])
-        Myed = float(post_data["Myed"])
-        Blt = float(post_data["Blt"])
-        C1 = float(post_data["C1"])
-        k2 = float(post_data["k2"])
+        Mzed = float(post_data["Mzed"].replace(',','.'))
+        Myed = float(post_data["Myed"].replace(',','.'))
+        Blt = float(post_data["Blt"].replace(',','.'))
+        C1 = float(post_data["C1"].replace(',','.'))
+        k2 = float(post_data["k2"].replace(',','.'))
         
 
         df = pd.read_excel('Excel.xlsx', header = None,  sheet_name='IPE', skiprows=6, usecols = "B:AP")
@@ -591,9 +605,6 @@ def getInteraccion():
         MbRd = xlt * resMy
         interacPL = Myed / MbRd
 
-        
-        
-
         Lky = L * By * 1000
         Lkz = L * Bz * 1000
 
@@ -602,8 +613,8 @@ def getInteraccion():
 
         esbLim = calcularEsbLim(claseAcero)
 
-        curvaY = calcularCurvaPandeoY(claseAcero)
-        curvaZ = calcularCurvaPandeoZ(claseAcero)
+        curvaY = calcularCurvaPandeoY(claseAcero, hdb)
+        curvaZ = calcularCurvaPandeoZ(claseAcero, hdb)
 
         lambdaRedy = lambday / esbLim
         lambdaRedz = lambdaz / esbLim

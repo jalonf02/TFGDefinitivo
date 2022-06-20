@@ -78,12 +78,13 @@
           <option>3</option>
           <option>4</option>
         </select>
-        <p>Seleccione la clase de flexocompresión según la tabla:</p>
+        <p>Seleccione la clase de flexocompresión:</p>
         <select v-model="selected.clase">
           <option>1</option>
           <option>2</option>
           <option>3</option>
         </select>
+        <p>
         <button
           id="button-2"
           type="button"
@@ -92,6 +93,7 @@
         >
           Introducir Datos
         </button>
+        </p>
       </form>
       <form v-show="informacionIntroducida3">
         <p>Introduzca Vyed:</p>
@@ -104,7 +106,7 @@
           v-model="selected.resVz"
           placeholder="VzEd"
         />
-        <p></p>
+        <p>
         <button
           id="button-3"
           type="button"
@@ -113,7 +115,29 @@
         >
           Iniciar
         </button>
+        </p>
       </form>
+      <br/>
+       <button
+        id="button4"
+        type="button"
+        v-show="ocultar2"
+        v-on:click="getPasoAnterior()"
+        variant="dark"
+        class="botton"
+      >
+      Anterior
+      </button>
+      <button
+        id="button2"
+        type="button"
+        v-show="ocultar"
+        v-on:click="getPasoSiguiente()"
+        variant="dark"
+        class="boton"
+      >
+        Siguiente
+      </button>
     </div>
     <div class="formulas">
       <h4>Formulas:</h4>
@@ -250,27 +274,6 @@
       <h4 class="titulo">Desarrollo paso a paso</h4>
       {{ nextPaso["texto"] }}
       {{ nextPaso["resultado0"] }}
-      <br/>
-      <button
-        id="button4"
-        type="button"
-        v-show="ocultar2"
-        v-on:click="getPasoAnterior()"
-        variant="dark"
-        class="botton"
-      >
-      Anterior
-      </button>
-      <button
-        id="button2"
-        type="button"
-        v-show="ocultar"
-        v-on:click="getPasoSiguiente()"
-        variant="dark"
-        class="boton"
-      >
-        Siguiente
-      </button>
       <br/>
       <br/>
       <img
@@ -411,7 +414,7 @@ export default {
           'El perfil seleccionado es ' +
           this.selected.name +
           '.\n\n' +
-          'A continuación, debemos introducir las esfuerzos en las secciones y la clase correspondiente.\n' +
+          'A continuación, debemos introducir los esfuerzos en las secciones y la clase correspondiente.\n\n' +
           'La clase viene dada por la tabla según el perfil. Además se debe introducir la clase a flexocompresión correspondiente.\n\n' +
           'Siguiendo la tabla, vemos que las casillas sombreadas significan que un perfil nunca podrá ser de esa clase y el asterisco indica ' +
           'que la sección no cambia para los valores de Ned superiores a esa clase.\n\n'
@@ -419,24 +422,34 @@ export default {
       return false
     },
     cambioInformacion2: function () {
-      if (this.selected.resN !== '' && this.selected.clase !== '' && this.selected.resMy !== '' && this.selected.resMz !== '') {
+      let aux1 = this.selected.resN.replace(/,/g, '.')
+      let aux2 = this.selected.resMy.replace(/,/g, '.')
+      let aux3 = this.selected.resMz.replace(/,/g, '.')
+      if ((this.selected.resN !== '' && !isNaN(aux1)) && this.selected.clase !== '' && (this.selected.resMy !== '' && !isNaN(aux2)) &&
+      (this.selected.resMz !== '' && !isNaN(aux3))) {
         this.informacionIntroducida2 = false
         this.informacionIntroducida3 = true
         this.paso = 0
         this.nextPaso['texto'] =
           'Los datos elegidos en el paso anterior se muestran en la tabla.\n\n' +
           'Ahora, debemos introducir los esfuerzos V en ambos ejes para poder iniciar la ejecución.\n'
+      } else {
+        this.$alert('Valores introducidos incorrectos.')
       }
       return false
     },
     cambioInformacion3: function () {
-      if (this.selected.resVy !== '' && this.selected.resVz !== '') {
+      let aux1 = this.selected.resVy.replace(/,/g, '.')
+      let aux2 = this.selected.resVz.replace(/,/g, '.')
+      if ((this.selected.resVy !== '' && !isNaN(aux1)) && (this.selected.resVz !== '' && !isNaN(aux2))) {
         this.informacionIntroducida3 = false
         this.informacionIntroducida = false
         this.ocultar = true
         this.getResistencias()
         this.nextPaso['texto'] = 'Ahora que ya se han introducido todos los datos puedes ver los resultados en la tabla.\n\n' +
         'Para ver una ejecución por pasos utilice el botón siguiente, en caso de querer introducir nuevos datos rellene nuevamente el formulario.\n'
+      } else {
+        this.$alert('Valores introducidos incorrectos.')
       }
       return false
     },
@@ -620,19 +633,17 @@ export default {
   margin-bottom: 0px;
 }
 .imagen{
-  width: 200px;
+  width: 40%;
   height: auto;
-  margin-top: 5%;
   float: center;
 }
 .imagen2{
-  width: 320px;
+  width: 40%;
   height: auto;
-  margin-top: 5%;
   float: center;
 }
 .imagen3{
-  width: 200px;
+  width: 10%;
   height: auto;
   float: right;
 }
@@ -651,12 +662,14 @@ export default {
   float: right;
 }
 .tablaPerfiles{
-  height: 470px;
+  max-height: 88%;
+  max-width: auto;
   margin-top: 0px;
   float: center;
 }
 .boton{
   float: right;
+  margin-right: 100px;
 }
 .superior{
   background-color:aliceblue;

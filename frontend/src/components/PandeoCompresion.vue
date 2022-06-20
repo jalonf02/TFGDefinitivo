@@ -59,6 +59,27 @@
             </button>
           </p>
         </form>
+        <br/>
+        <button
+          id="button4"
+          type="button"
+          v-show="ocultar2"
+          v-on:click="getPasoAnterior()"
+          variant="dark"
+          class="botton"
+        >
+          Anterior
+        </button>
+        <button
+          id="button2"
+          type="button"
+          v-show="ocultar"
+          v-on:click="getPasoSiguiente()"
+          variant="dark"
+          class="boton"
+        >
+          Siguiente
+        </button>
       </div>
       <div class="formulas">
         <h4>Formulas:</h4>
@@ -117,27 +138,6 @@
         {{ nextPaso["texto"] }}
         {{ nextPaso["resultado0"] }}
         {{ nextPaso["resultado1"] }}
-        <br/>
-        <button
-          id="button4"
-          type="button"
-          v-show="ocultar2"
-          v-on:click="getPasoAnterior()"
-          variant="dark"
-          class="botton"
-        >
-          Anterior
-        </button>
-        <button
-          id="button2"
-          type="button"
-          v-show="ocultar"
-          v-on:click="getPasoSiguiente()"
-          variant="dark"
-          class="boton"
-        >
-          Siguiente
-        </button>
         <br/><br/>
         <img
           id="imagenPaso0"
@@ -262,13 +262,18 @@ export default{
         'El perfil seleccionado es ' + this.selected.name + '.\n\n' +
         'Ahora, para el cálculo de pandeo de barras a compresión será necesario añadir los siguientes valores: \n\n' +
         'Primero, debemos introducir tanto la longitud de la barra (L) en metros.' +
-        ' Además, serán necesarios los coeficientes β tanto para el eje y como  para el eje x.\n ' +
+        'Además, serán necesarios los coeficientes β tanto para el eje y como  para el eje x.\n ' +
         'Por último, se debe añadir el esfuerzo axil (NEd) en kN ya que será necesario para cáculos posteriores.'
       }
       return false
     },
     cambioInformacion2: function () {
-      if (this.selected.restNecN !== '' && this.selected.L !== '' && this.selected.By !== '' && this.selected.Bz !== '') {
+      let aux1 = this.selected.resNecN.replace(/,/g, '.')
+      let aux2 = this.selected.L.replace(/,/g, '.')
+      let aux3 = this.selected.By.replace(/,/g, '.')
+      let aux4 = this.selected.Bz.replace(/,/g, '.')
+      if ((this.selected.resNecN !== '' && !isNaN(aux1)) && (this.selected.By !== '' && !isNaN(aux3)) &&
+      (this.selected.L !== '' && !isNaN(aux2)) && (this.selected.Bz !== '' && !isNaN(aux4))) {
         this.informacionIntroducida = false
         this.informacionIntroducida2 = false
         this.paso = 0
@@ -282,8 +287,10 @@ export default{
         'El coeficiente β seleccionado para el eje y es ' + this.selected.By + '.\n' +
         'El coeficiente β seleccionado para el eje z es ' + this.selected.Bz + '.\n' +
         'El esfuerzo axil seleccionado para el eje z es Ned = ' + this.selected.resNecN + 'kN.\n\n' +
-        'En la tabla inferior se muestran todos los resultados.\n' +
-        'Para ver el proceso paso a paso utilice el boton siguiente.'
+        'Ahora que ya se han introducido todos los datos, puedes ver los resultados en la tabla.\n\n' +
+        'Para ver una ejecución por pasos utilice el botón siguiente, en caso de querer introducir nuevos datos rellene nuevamente el formulario.\n'
+      } else {
+        this.$alert('Valores introducidos incorrectos.')
       }
       return false
     },
@@ -346,7 +353,7 @@ export default{
           this.nextPaso['texto'] = 'Paso 1: \n\n' +
           'Para calcular la resistencia a pandeo necesitaremos realizar diversos cálculos primero. \n' +
           'El primer paso sera calcular el valor de Lₖ en mm para ambos ejes.\n ' +
-          'Para ello, utilizamos la formula que se muestra a la derecha, donde se utilizara el coeficiente β elegido para cada eje para calcular su Lₖ correspondiente.\n'
+          'Para ello, utilizamos la fórmula que se muestra a la derecha, donde se utilizará el coeficiente β elegido para cada eje para calcular su Lₖ correspondiente.\n'
           this.ocultar2 = false
           break
         case 1:
@@ -354,7 +361,7 @@ export default{
           this.nextPaso['resultado1'] = 'λmec para el eje z = ' + this.pandeo[3] + '.'
           this.nextPaso['texto'] = 'Paso 2: \n\n' +
           'A continuación, calcularemos el valor de la Esbeltez mecánica.\n\n' +
-          'Para realizar este calculoe es necesario el valor de Lₖ, calculado en el paso anterior y el valor i de cada eje, que se obtiene de la tabla del perfil seleccionado.'
+          'Para realizar este calculo es necesario el valor de Lₖ, calculado en el paso anterior y el valor i de cada eje, que se obtiene de la tabla del perfil seleccionado.'
           this.ocultar2 = true
           break
         case 2:
@@ -477,7 +484,7 @@ export default{
 }
 .boton{
   float: right;
-  text-align: center;
+  margin-right: 100px;
 }
 .superior{
   background-color:aliceblue;
