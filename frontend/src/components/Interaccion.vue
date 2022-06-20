@@ -1,66 +1,152 @@
 <template>
-  <div id="app" style="margin-top: 0px">
-    <div class="superior">
-      <h3 style="margin-bottom: 0px;">Calculo de pandeo de barras a compresión</h3>
-      <div class="supizq">
-        <form v-show="!informacionIntroducida">
-          <p>Selección del tipo de acero y coeficiente:</p>
-          <select v-model="selected.tipoAcero">
-            <option disabled value="">Seleccione tipo de acero</option>
-            <option v-bind:key="aux" v-for="aux in excel3['TiposAcero']">
-              {{ aux }}
-            </option>
-          </select>
-          <select v-model="selected.coeficiente">
-            <option disabled value="">Seleccione el coeficiente</option>
-            <option v-bind:key="aux2" v-for="aux2 in excel2['Coeficientes']">
-              {{ aux2 }}
-            </option>
-          </select>
-          <p>Selección del perfil:</p>
-          <select v-model="selected.tipo">
-            <option disabled value="">Seleccione un elemento</option>
-            <option v-bind:key="tipo" v-for="tipo in excel['Tipos']">
-              {{ tipo }}
-            </option>
-          </select>
-          <select id="tipos" v-model="selected.name">
-            <option disabled value="">Seleccione un elemento</option>
-            <option v-bind:key="datos" v-for="datos in excel[selected.tipo]">
-              {{ datos }}
-            </option>
-          </select>
-          <p></p>
-          <button
-            id="button-1"
-            type="button"
-            v-on:click="cambioInformacion()"
-            variant="dark"
-          >
-            Introducir datos
-          </button>
-        </form>
-        <form v-show="informacionIntroducida2">
+  <div id="app" style="margin-top: 0px; margin-bottom: 0px;">
+    <div class = "superior">
+    <h3 style="margin-bottom: 0px;">Interaccion de esfuerzos en barra</h3>
+    <div class="supizq">
+      <form v-show="!informacionIntroducida">
+        <p>Selección del tipo de acero y coeficiente:</p>
+        <select v-model="selected.tipoAcero">
+          <option disabled value="">Seleccione tipo de acero</option>
+          <option v-bind:key="aux" v-for="aux in excel3['TiposAcero']">
+            {{ aux }}
+          </option>
+        </select>
+        <select v-model="selected.coeficiente">
+          <option disabled value="">Seleccione el coeficiente</option>
+          <option v-bind:key="aux2" v-for="aux2 in excel2['Coeficientes']">
+            {{ aux2 }}
+          </option>
+        </select>
+        <p>Selección del perfil:</p>
+        <select v-model="selected.tipo">
+          <option disabled value="">Seleccione un elemento</option>
+          <option v-bind:key="tipo" v-for="tipo in excel['Tipos']">
+            {{ tipo }}
+          </option>
+        </select>
+        <select id="tipos" v-model="selected.name">
+          <option disabled value="">Seleccione un elemento</option>
+          <option v-bind:key="datos" v-for="datos in excel[selected.tipo]">
+            {{ datos }}
+          </option>
+        </select>
+        <p></p>
+        <button
+          id="button-1"
+          type="button"
+          v-on:click="cambioInformacion()"
+          variant="dark"
+        >
+          Introducir datos
+        </button>
+      </form>
+      <p></p>
+      <form v-show="informacionIntroducida2">
+        <p>Introduzca Ned y la clase:</p>
+        <input
+          v-model="selected.Ned"
+          placeholder="Ned"
+        />
+        <select v-model="selected.claseN">
+          <option>1</option>
+          <option>2</option>
+          <option>3</option>
+          <option>4</option>
+        </select>
+        <p>Introduzca Myed y la clase:</p>
+        <input
+          v-model="selected.Myed"
+          placeholder="Myed"
+        />
+        <select v-model="selected.claseMy">
+          <option>1</option>
+          <option>2</option>
+          <option>3</option>
+          <option>4</option>
+        </select>
+        <p>Introduzca Mzed y la clase:</p>
+        <input
+          v-model="selected.Mzed"
+          placeholder="Mzed"
+        />
+        <select v-model="selected.claseMz">
+          <option>1</option>
+          <option>2</option>
+          <option>3</option>
+          <option>4</option>
+        </select>
+        <p>Seleccione la clase de flexocompresión según la tabla:</p>
+        <select v-model="selected.clase">
+          <option>1</option>
+          <option>2</option>
+          <option>3</option>
+        </select>
+        <button
+          id="button-2"
+          type="button"
+          v-on:click="cambioInformacion2()"
+          variant="dark"
+        >
+          Introducir Datos
+        </button>
+      </form>
+      <form v-show="informacionIntroducida3">
           <p>Introduzca L() m:</p>
           <input placeholder="L() m " v-model="selected.L" />
           <p>Introduzca βy y βz:</p>
           <input placeholder="βy" v-model="selected.By" />
           <input placeholder="βz" v-model="selected.Bz" />
-          <p>Introduzca NEd:</p>
-          <input placeholder="NEd" v-model="selected.resNecN" />
           <p>
             <button
               id="button-1"
               type="button"
-              v-on:click="cambioInformacion2()"
+              v-on:click="cambioInformacion3()"
               variant="dark"
             >
-              Iniciar
+              Introducir Datos
             </button>
           </p>
         </form>
+        <form v-show="informacionIntroducida4">
+      <p>Introduzca el valor de k₂:</p>
+      <select v-model="selected.k2">
+        <option>0.7</option>
+        <option>1</option>
+        <option>1.3</option>
+      </select>
+      <p>Introduzca el valor de C₁ deseado según la tabla:</p>
+        <input placeholder="C₁" v-model="selected.C1" />
+      <p>Introduzca el valor de βₗₜ, por defecto será 1:</p>
+        <input placeholder="βₗₜ" v-model="selected.Blt" />
+        <p></p>
+        <button
+          id="button-2"
+          type="button"
+          v-on:click="cambioInformacion4()"
+          variant="dark"
+        >
+          Iniciar
+        </button>
+        </form>
+        <form v-show="informacionIntroducida5">
+      <p>Introduzca el valor de Cmy:</p>
+        <input placeholder="C₁" v-model="selected.Cmy" />
+      <p>Introduzca el valor de Cmz:</p>
+        <input placeholder="C₁" v-model="selected.Cmz" />
+      <p>Introduzca el valor de Cmlt:</p>
+        <input placeholder="βₗₜ" v-model="selected.Cmlt" />
+        <p></p>
+        <button
+          id="button-2"
+          type="button"
+          v-on:click="cambioInformacion5()"
+          variant="dark"
+        >
+          Iniciar
+        </button>
+        </form>
       </div>
-      <div class="formulas">
+            <div class="formulas">
         <h4>Formulas:</h4>
         <img
           id="imagenPaso3"
@@ -73,42 +159,6 @@
           id="imagenPaso0"
           src="../assets/CalculoFyD.png"
           v-show="pantallaInicial"
-          class="imagen"
-        />
-        <img
-          id="imagenPaso0"
-          src="../assets/CalculoLk.png"
-          v-if="(hover0 && this.paso !== 1) || this.paso === 1"
-          class="imagen"
-        />
-        <img
-          id="imagenPaso1"
-          src="../assets/CalculoLambda.png"
-          v-if="(hover1 && this.paso !== 2) || this.paso === 2"
-          class="imagen"
-        />
-        <img
-          id="imagenPaso2"
-          src="../assets/CalculoLambdaRed.png"
-          v-if="(hover2 && this.paso !== 3) || this.paso === 3"
-          class="imagen"
-        />
-        <img
-          id="imagenPaso4"
-          src="../assets/CalcularChi.png"
-          v-if="(hover4 && this.paso !== 5) || this.paso === 5"
-          class="imagen2"
-        />
-        <img
-          id="imagenPaso5"
-          src="../assets/CalculoNbrd.png"
-          v-if="(hover5 && this.paso !== 6) || this.paso === 6"
-          class="imagen"
-        />
-        <img
-          id="imagenPaso6"
-          src="../assets/CalculoInteraccion.png"
-          v-if="(hover6 && this.paso !== 7) || this.paso === 7"
           class="imagen"
         />
       </div>
@@ -144,17 +194,6 @@
           src="../assets/TipoAcero.png"
           v-show="pantallaInicial"
         />
-        <img
-          id="imagenPaso2"
-          src="../assets/CalculoLambdaRed2.png"
-          v-show="this.paso === 3"
-        />
-        <img
-          id="imagenPaso0"
-          src="../assets/CalcularChi2.png"
-          v-show="this.paso === 5"
-          class="imagen2"
-        />
       </div>
     </div>
     <div class="abajo">
@@ -163,44 +202,54 @@
           <tr>
             <th></th>
             <th @mouseover="hover0 = true" @mouseleave="hover0 = false">
-              Lₖ (mm)
+              interac. CTE
             </th>
             <th @mouseover="hover1 = true" @mouseleave="hover1 = false">
-              λmecanica
+              interac EC3
             </th>
             <th @mouseover="hover2 = true" @mouseleave="hover2 = false">
-              λreducida
+              interac. Pandeo y
             </th>
-            <th>curva</th>
-            <th @mouseover="hover4 = true" @mouseleave="hover4 = false">χ</th>
+            <th>interac. Pandeo z</th>
+            <th @mouseover="hover4 = true" @mouseleave="hover4 = false">interac. PL</th>
             <th @mouseover="hover5 = true" @mouseleave="hover5 = false">
-              Nb,Rd
+              interac. x
             </th>
             <th @mouseover="hover6 = true" @mouseleave="hover6 = false">
-              interac.
+              interac. y
             </th>
           </tr>
         </thead>
         <tbody>
           <tr>
-            <td>Eje Y</td>
-            <td>{{ pandeo[0] }}</td>
-            <td>{{ pandeo[2] }}</td>
-            <td>{{ pandeo[4] }}</td>
-            <td>{{ pandeo[6] }}</td>
-            <td>{{ pandeo[8] }}</td>
-            <td>{{ pandeo[10] }}</td>
-            <td>{{ pandeo[12] }}</td>
+            <td>Interacciones</td>
+            <td>{{ interaccion['interacCTE'] }}</td>
+            <td>{{ interaccion['interacEC3'] }}</td>
+            <td>{{ interaccion['interacy'] }}</td>
+            <td>{{ interaccion['interacz'] }}</td>
+            <td>{{ interaccion['interacPL'] }}</td>
+            <td>{{ interaccion['interacFinalz'] }}</td>
+            <td>{{ interaccion['interacFinaly'] }}</td>
           </tr>
           <tr>
-            <td>Eje Z</td>
-            <td>{{ pandeo[1] }}</td>
-            <td>{{ pandeo[3] }}</td>
-            <td>{{ pandeo[5] }}</td>
-            <td>{{ pandeo[7] }}</td>
-            <td>{{ pandeo[9] }}</td>
-            <td>{{ pandeo[11] }}</td>
-            <td>{{ pandeo[13] }}</td>
+            <td>Datos</td>
+            <td>Kyy</td>
+            <td>Kyz</td>
+            <td>Kzy</td>
+            <td>Kzz</td>
+            <td>Cm,y</td>
+            <td>Cm,z</td>
+            <td>Cm,LT</td>
+          </tr>
+          <tr>
+            <td></td>
+            <td>{{ interaccion['Kyy'] }}</td>
+            <td>{{ interaccion['Kyz'] }}</td>
+            <td>{{ interaccion['Kzy'] }}</td>
+            <td>{{ interaccion['Kzz'] }}</td>
+            <td>{{ this.selected.Cmy }}</td>
+            <td>{{ this.selected.Cmz }}</td>
+            <td>{{ this.selected.Cmlt }}</td>
           </tr>
         </tbody>
       </table>
@@ -218,10 +267,22 @@ export default{
         tipo: '',
         coeficiente: '',
         tipoAcero: '',
-        resNecN: '',
+        Ned: '',
+        Myed: '',
+        Mzed: '',
         L: '',
         By: '',
-        Bz: ''
+        Bz: '',
+        Blt: '',
+        C1: '',
+        clase: '',
+        claseN: '',
+        claseMy: '',
+        claseMz: '',
+        k2: '',
+        Cmy: '',
+        Cmz: '',
+        Cmlt: ''
       },
       hover0: false,
       hover1: false,
@@ -230,7 +291,7 @@ export default{
       hover5: false,
       hover6: false,
       imagen: '',
-      pandeo: [],
+      interaccion: [],
       excel: {},
       excel2: {},
       excel3: {},
@@ -240,7 +301,11 @@ export default{
       ocultar: false,
       ocultar2: false,
       informacionIntroducida2: false,
-      pantallaInicial: true
+      informacionIntroducida3: false,
+      informacionIntroducida4: false,
+      informacionIntroducida5: false,
+      pantallaInicial: true,
+      pandeo: []
     }
   },
   methods: {
@@ -251,7 +316,7 @@ export default{
         this.pantallaInicial = false
         this.ocultar = false
         this.ocultar2 = false
-        this.pandeo = ''
+        this.interaccion = ''
         this.paso = 0
         this.nextPaso['resultado0'] = ''
         this.nextPaso['resultado01'] = ''
@@ -259,48 +324,67 @@ export default{
         this.nextPaso['resultado11'] = ''
         this.nextPaso['texto'] = 'El tipo de acero seleccionado es ' + this.selected.tipoAcero + '.\n' +
         'El coeficiente seleccionado es ' + this.selected.coeficiente + '.\n' +
-        'El perfil seleccionado es ' + this.selected.name + '.\n\n' +
-        'Ahora, para el cálculo de pandeo de barras a compresión será necesario añadir los siguientes valores: \n\n' +
-        'Primero, debemos introducir tanto la longitud de la barra (L) en metros.' +
-        ' Además, serán necesarios los coeficientes β tanto para el eje y como  para el eje x.\n ' +
-        'Por último, se debe añadir el esfuerzo axil (NEd) en kN ya que será necesario para cáculos posteriores.'
+        'El perfil seleccionado es ' + this.selected.name + '.\n\n'
       }
       return false
     },
     cambioInformacion2: function () {
-      if (this.selected.restNecN !== '' && this.selected.L !== '' && this.selected.By !== '' && this.selected.Bz !== '') {
-        this.informacionIntroducida = false
+      if (this.selected.resN !== '' && this.selected.clase !== '' && this.selected.resMy !== '' && this.selected.resMz !== '') {
         this.informacionIntroducida2 = false
-        this.paso = 0
-        this.ocultar = true
-        this.getPandeoCompresion()
-        this.nextPaso['resultado0'] = ''
-        this.nextPaso['resultado01'] = ''
-        this.nextPaso['resultado1'] = ''
-        this.nextPaso['resultado11'] = ''
-        this.nextPaso['texto'] = 'La longitud de barra seleccionada es L = ' + this.selected.L + ' m.\n' +
-        'El coeficiente β seleccionado para el eje y es ' + this.selected.By + '.\n' +
-        'El coeficiente β seleccionado para el eje z es ' + this.selected.Bz + '.\n' +
-        'El esfuerzo axil seleccionado para el eje z es Ned = ' + this.selected.resNecN + 'kN.\n\n' +
-        'En la tabla inferior se muestran todos los resultados.\n' +
-        'Para ver el proceso paso a paso utilice el boton siguiente.'
+        this.informacionIntroducida3 = true
+        this.nextPaso['texto'] = 'Texto de prueba 2.'
       }
       return false
     },
-    getPandeoCompresion: function () {
-      const path = 'http://127.0.0.1:5000/PandeoCompresion'
+    cambioInformacion3: function () {
+      if (this.selected.L !== '' && this.selected.By !== '' && this.selected.Bz !== '') {
+        this.informacionIntroducida3 = false
+        this.informacionIntroducida4 = true
+        this.nextPaso['texto'] = 'Texto de prueba 3.'
+      }
+      return false
+    },
+    cambioInformacion4: function () {
+      if (this.selected.L !== '' && this.selected.By !== '' && this.selected.Bz !== '') {
+        this.informacionIntroducida4 = false
+        this.informacionIntroducida5 = true
+        this.nextPaso['texto'] = 'Texto de prueba 4.'
+      }
+      return false
+    },
+    cambioInformacion5: function () {
+      if (this.selected.Cmy !== '' && this.selected.Cmz !== '' && this.selected.Cmlt !== '') {
+        this.informacionIntroducida5 = false
+        this.informacionIntroducida = false
+        this.ocultar = true
+        this.getInteraccion()
+        this.nextPaso['texto'] = 'Texto de prueba 5.'
+      }
+      return false
+    },
+    getInteraccion: function () {
+      const path = 'http://127.0.0.1:5000/Interaccion'
       axios.post(path, {
         name: this.selected.name,
         coeficiente: this.selected.coeficiente,
         tipoAcero: this.selected.tipoAcero,
-        resNecN: this.selected.resNecN,
         L: this.selected.L,
         By: this.selected.By,
-        Bz: this.selected.Bz
+        Bz: this.selected.Bz,
+        Ned: this.selected.Ned,
+        Myed: this.selected.Myed,
+        Mzed: this.selected.Mzed,
+        Blt: this.selected.Blt,
+        C1: this.selected.C1,
+        clase: this.selected.clase,
+        k2: this.selected.k2,
+        Cmy: this.selected.Cmy,
+        Cmz: this.selected.Cmz,
+        Cmlt: this.selected.Cmlt
       }
       )
         .then(body => {
-          this.pandeo = body.data
+          this.interaccion = body.data
         })
         .catch(err => {
           console.log(err)
@@ -420,16 +504,16 @@ export default{
 </script>
 
 <style scoped>
-.table {
-  font-size: 1rem;
-  margin-left: auto;
-  margin-right: auto;
-  border-spacing: 1.5cm;
-  border: 1px solid;
-}
 .app{
     text-align: center;
     align-content: center;
+}
+.table{
+    font-size: 1rem;
+    margin-left: auto;
+    margin-right: auto;
+    border-spacing:1.2cm;
+    border: 1px solid;
 }
 .supizq{
     float: left;
@@ -456,6 +540,17 @@ export default{
   margin-top: 5%;
   float: center;
 }
+.imagen2{
+  width: 320px;
+  height: auto;
+  margin-top: 5%;
+  float: center;
+}
+.imagen3{
+  width: 200px;
+  height: auto;
+  float: right;
+}
 .centro{
   white-space:pre-line;
   background-color: aliceblue;
@@ -471,19 +566,15 @@ export default{
   float: right;
 }
 .tablaPerfiles{
-  height: 400px;
+  height: 470px;
   margin-top: 0px;
   float: center;
 }
 .boton{
   float: right;
-  text-align: center;
 }
 .superior{
   background-color:aliceblue;
   height: 550px;
-}
-.curvaPandeo {
-  width: 460px;
 }
 </style>

@@ -30,7 +30,7 @@ def calcularFyD(claseAcero, coeficiente):
     return Fy/coeficiente
 
 def calcularXLT(fi, Esblt):
-    if 1 / (fi + (fi * fi - Esblt * Esblt)**0.5) > 1 : 
+    if (1 / (fi + (fi * fi - Esblt * Esblt)**0.5)) > 1 : 
         return 1
     else:
         return 1 / (fi + (fi * fi - Esblt * Esblt)**0.5)
@@ -91,6 +91,72 @@ def calcularXz(curvaPandeoZ, lamRedz):
         aux = 0.5 * (1 + 0.76*(lamRedz - 0.2) + lamRedz**2)
         return 1/(aux + (aux*aux - lamRedz**2)**0.5)
 
+def calcularKyy(Cmy, Nbyrd, Ned, lambdaRedy, flexCompr): 
+    Kyy = 0
+    aux1 = Cmy * (1+0.6*lambdaRedy*Ned/Nbyrd)
+    aux2 = Cmy * (1+0.6*Ned/Nbyrd)
+    aux3 = Cmy * (1+(lambdaRedy - 0.2) * Ned / Nbyrd)
+    aux4 = Cmy * (1 + 0.8 * Ned / Nbyrd )
+    if flexCompr > 2:
+        if  aux1 <  aux2:
+            return aux1
+        else:
+            return aux2
+    else:
+        if aux3 < aux4:
+            return aux3
+        else:
+            return aux4
+
+def calcularKzz(Cmz, Nbzrd, Ned, lambdaRedz, flexCompr):
+    aux1 = Cmz * (1 + 0.6 * lambdaRedz * Ned / Nbzrd)
+    aux2 = Cmz * (1 + 0.6 * Ned / Nbzrd)
+    aux3 = Cmz * (1 + (2 * lambdaRedz - 0.6) * Ned /Nbzrd)
+    aux4 = Cmz * (1 + 1.4 * Ned / Nbzrd)
+    if flexCompr > 2:
+        if  aux1 <  aux2:
+            return aux1
+        else:
+            return aux2
+    else:
+        if aux3 < aux4:
+            return aux3
+        else:
+            return aux4
+
+def calcularKyz(Kzz, flexCompr):
+    if flexCompr > 2:
+        return Kzz
+    else:
+        return 0.6 * Kzz
+
+def calcularKzy(CmLT, Nbzrd, Ned, lambdaRedz, flexCompr):
+    aux1 = 1 - (0.05 * lambdaRedz / (CmLT - 0.25) * Ned / Nbzrd)
+    aux2 = 1 - (0.05 / (CmLT - 0.25) * Ned / Nbzrd)
+    aux3 = 0
+    aux4 = 0
+
+    if flexCompr > 2:
+        if  aux1 <  aux2:
+            return aux2
+        else:
+            return aux1
+    else:
+        if lambdaRedz < 0.4:
+            aux3 = 0.6 + lambdaRedz
+            aux4 = 1 - (0.1 * lambdaRedz / (CmLT - 0.25) * Ned / Nbzrd)
+            if aux3 < aux4:
+                return aux3
+            else:
+                return aux4
+        else:
+            aux3 = 1 - (0.1 * lambdaRedz / (CmLT - 0.25) * Ned / Nbzrd)
+            aux4 = 1 - (0.1 / (CmLT - 0.25) * Ned / Nbzrd)
+            if aux3 < aux4:
+                return aux4
+            else:
+                return aux3
+    
 
 app = Flask(__name__)
 Cors = CORS(app)
@@ -147,6 +213,8 @@ def getResistencias():
         Ned = int(post_data["resN"])
         Myed = float(post_data["resMy"])
         Mzed = float(post_data["resMz"])
+        Vyed = float(post_data["Vyed"])
+        Vzed = float(post_data["Vzed"])
 
 
         df = pd.read_excel('Excel.xlsx', header = None,  sheet_name='IPE', skiprows=6, usecols = "B:AP")
@@ -207,6 +275,13 @@ def getResistencias():
         else :
             interacEC3 = (Myed / Myaux)**2  + (Mzed / Mzaux)**aux
 
+        pz = (2*Vzed/Vz - 1)**0.5
+        Mvrdz = (Wplz - pz*Avz**2 / 4*tw) * Fyd
+
+        if Vzed <= 0.5* Vz:
+            Mvrdz = resMy
+
+        interacV = Ned / resN + Myed / Mvrdz + Mzed / resMz
 
         resN = (round(resN, 1))
         resMy = (round(resMy, 1))
@@ -215,9 +290,11 @@ def getResistencias():
         Vz = (round(Vz, 1))
         interacEC3 = (round(interacEC3,2))
         interacCTE = (round(interacCTE,2))
+        Mvrdz = (round(Mvrdz, 1))
+        interacV = (round(interacV, 2))
         
         response_object['message'] ='Data added!'
-        return jsonify({0 : resN, 1 : resMy, 2 : resMz, 3 : Vy, 4 : Vz, 5 : interacCTE, 6 : interacEC3})
+        return jsonify({0 : resN, 1 : resMy, 2 : resMz, 3 : Vy, 4 : Vz, 5 : interacCTE, 6 : interacEC3, 7 : Mvrdz, 8 : interacV})
     else:
         
         response_object = {'status':'success'}
@@ -236,13 +313,16 @@ def getPandeoLateral():
         tipoAce = post_data["name"]
         claseAcero = post_data["tipoAcero"]
         coeficiente = float(post_data["coeficiente"])
-        resNecN = float(post_data["resNecN"])
+        Ned = float(post_data["Ned"])
         L = float(post_data["L"])
         Blt = float(post_data["Blt"])
         C1 = float(post_data["C1"])
         k2 = float(post_data["K2"])
-        E = float(post_data["E"])
-        G = float(post_data["G"])
+        fCompr = int(post_data["clase"])
+        Myed = float(post_data["Myed"])
+
+        E = 210
+        G = 80
         Lc = L * Blt
 
         #Pasamos de la E y G recibida (Gpa) a E y G (Mpa)
@@ -257,8 +337,6 @@ def getPandeoLateral():
         a = df_TipoAcero.iloc[0][8]
         Wel = df_TipoAcero.iloc[0][20]
         Wpl = df_TipoAcero.iloc[0][21]
-        Welz = df_TipoAcero.iloc[0][25]
-        Wplz = df_TipoAcero.iloc[0][26]
         h = df_TipoAcero.iloc[0][3]
         b = df_TipoAcero.iloc[0][4]
         tf = df_TipoAcero.iloc[0][6]  
@@ -267,9 +345,10 @@ def getPandeoLateral():
         iz = df_TipoAcero.iloc[0][27]
         It = df_TipoAcero.iloc[0][29]
         Iz = df_TipoAcero.iloc[0][24]
+        Iw = df_TipoAcero.iloc[0][30]
 
-        fCompr = flexCompr(tipoAce)
         Fyd = calcularFyD(claseAcero, coeficiente)
+        fy = Fyd * coeficiente
         hdb = h/b
         alfaLT = 0
         curva = 'a'
@@ -279,8 +358,12 @@ def getPandeoLateral():
         else:
             alfaLT = 0.21
 
+        #Calculo Lclim
+
+        Lclim = 38*iz / ((Ned / 57.4 * a) + (1 / 756 * C1**2) * (Wpl**2 / a * It) * (fy / 235)**2 )**0.5
+
         #Calculo z,f
-        zf = resNecN * 1000 / Fyd / tw
+        zf = Ned * 1000 / Fyd / tw
         if zf > hi:
             zf = hi
         alaComp = (zf + hi) / 2
@@ -297,18 +380,23 @@ def getPandeoLateral():
         fi = 0.5 * (1 + alfaLT*(Esblt - 0.2) + Esblt**2)
         xlt = calcularXLT(fi, Esblt)
         MbRd = xlt * resMy
+        intersec = Myed / MbRd
 
         #Redondeamos a un decimal
         Mltw = (round(Mltw, 1))
         Mltv = (round(Mltv, 1))
         Mcr = (round(Mcr, 1))
-        Esblt = (round(Esblt, 1))
-        fi = (round(fi, 1))
-        xlt = (round(xlt, 1))
-        MbRd = (round(MbRd, 1))
+        Esblt = (round(Esblt, 2))
+        fi = (round(fi, 2))
+        xlt = (round(xlt, 2))
+        MbRd = (round(MbRd, 2))
+        intersec = round(intersec,2)
+        hdb = (round(hdb, 2))
+        Lc = (round(Lc, 2))
+        Lclim = (round(Lclim, 2))
 
         response_object['message'] ='Data added!'
-        return jsonify({'Mltw' : Mltw, 'Mltv' : Mltv, 'Mcr' : Mcr, 'Esblt' : Esblt, 'fi' : fi, 'xlt' : xlt, 'MbRd' : MbRd })
+        return jsonify({0 : Mltw, 1 : Mltv, 2 : Mcr, 3 : Esblt, 4 : fi, 5 : xlt, 6 : MbRd, 7 : intersec, 8 : Lc, 9 :Lclim, 10 : hdb, 11 : alfaLT, 12 : curva})
     else:
         
         response_object = {'status':'success'}
@@ -388,6 +476,170 @@ def getPandeoCompresion():
         response_object['message'] ='Data added!'
         return jsonify({0 : Lky, 1 : Lkz, 2 : lambday, 3 : lambdaz, 4 : lambdaRedy, 
         5 : lambdaRedz, 6 : curvaY, 7 : curvaZ, 8 : xy, 9 : xz, 10 : Nbrdy, 11 : Nbrdz, 12  : interacy, 13 : interacz})
+    else:
+        
+        response_object = {'status':'success'}
+        response_object['message'] ='Data added!'
+        return jsonify(response_object)
+
+@cross_origin
+@app.route("/Interaccion", methods=['POST', 'GET'])
+def getInteraccion():
+    if request.method == "POST":
+        
+        response_object = {'status':'success'}
+        post_data = request.get_json()
+        #Recogemos los valores introducidos por la aplicacion
+        tipoAce = post_data["name"]
+        claseAcero = post_data["tipoAcero"]
+        coeficiente = float(post_data["coeficiente"])       
+        L = float(post_data["L"])
+        By = float(post_data["By"])
+        Bz = float(post_data["Bz"])
+        Ned = float(post_data["Ned"])
+        Cmy = float(post_data["Cmy"])
+        Cmz = float(post_data["Cmz"])
+        CmLT = float(post_data["Cmlt"])
+        fCompr = int(post_data["clase"])
+        Mzed = float(post_data["Mzed"])
+        Myed = float(post_data["Myed"])
+        Blt = float(post_data["Blt"])
+        C1 = float(post_data["C1"])
+        k2 = float(post_data["k2"])
+        
+
+        df = pd.read_excel('Excel.xlsx', header = None,  sheet_name='IPE', skiprows=6, usecols = "B:AP")
+        is_TipoAcero = df.loc[:, 1] == tipoAce
+        df_TipoAcero = df.loc[is_TipoAcero]
+
+        #Extraigo los datos necesarios para calculo.
+        a = df_TipoAcero.iloc[0][8]
+        b = df_TipoAcero.iloc[0][4]
+        Wel = df_TipoAcero.iloc[0][20]
+        Wpl = df_TipoAcero.iloc[0][21]
+        Welz = df_TipoAcero.iloc[0][25]
+        Wplz = df_TipoAcero.iloc[0][26]
+        iz = df_TipoAcero.iloc[0][27]
+        iy = df_TipoAcero.iloc[0][22]
+        hi = df_TipoAcero.iloc[0][9]  
+        It = df_TipoAcero.iloc[0][29]
+        Iz = df_TipoAcero.iloc[0][24]
+        tf = df_TipoAcero.iloc[0][6]
+        tw = df_TipoAcero.iloc[0][5]
+        h = df_TipoAcero.iloc[0][3]
+        
+        Fyd = calcularFyD(claseAcero, coeficiente)
+        alfaLT = 0
+
+        zf = Ned * 1000 / Fyd / tw
+        if zf > hi:
+            zf = hi
+
+        #Calculo de resistencias        
+        resN = calcularResN(Fyd, a)
+        resMy = calcularResMy(fCompr, Wel, Wpl, Fyd)
+        resMz = calcularResMz(fCompr, Welz, Wplz, Fyd)
+        #Calculo Interacciones
+        n = Ned / resN
+        
+        aux = 5*n - 1
+        aux2 = (a - 2*b*tf) / a
+
+        if aux < 1 :
+            aux = 1
+
+        Myaux = resMy * ( (1 - n) / (1-aux2/2))
+        Mzaux = resMz * (1 - ((n-aux2)/(1-aux2))**2)
+
+        if Ned <= (0.25*resN) and Ned <= (0.5 * hi * tw * Fyd):
+            Myaux = resMy
+        elif Myaux > resMy:
+            Myaux = resMy
+
+        if Ned<= hi*tw*Fyd:
+            Mzaux = resMz
+        elif Mzaux > resMz:
+            Mzaux = resMz
+
+        interacCTE = Ned / resN + Myed / resMy + Mzed / resMz
+
+        if fCompr == 3 :
+            interacEC3 = Ned / resN + Myed / resMy + Mzed / resMz
+        else :
+            interacEC3 = (Myed / Myaux)**2  + (Mzed / Mzaux)**aux
+
+        E = 210
+        G = 80
+        E = E * 1000
+        G = G * 1000
+        Lc = L * Blt
+        alfaLT = 0
+        curva = 'a'
+        hdb = h / b
+        if hdb > 2:
+            alfaLT = 0.34
+            curva = 'b'
+        else:
+            alfaLT = 0.21
+        #Calculamos MLTw MLTv y MCR
+        Mltw = Wel * 1000.0 * (3.1416**2) * E / (Lc * 100.0 / iz)**2 * C1 / 1000000.0
+        Mltv = (G * E * It * 10000 * Iz * 10000)**0.5 * 3.1416 * C1 / Lc / 1000000000
+        Mcr = ((Mltw**2 + Mltv**2))**0.5 * k2
+        Esblt = (resMy * coeficiente / Mcr)**0.5
+        fi = 0.5 * (1 + alfaLT*(Esblt - 0.2) + Esblt**2)
+        xlt = calcularXLT(fi, Esblt)
+        MbRd = xlt * resMy
+        interacPL = Myed / MbRd
+
+        
+        
+
+        Lky = L * By * 1000
+        Lkz = L * Bz * 1000
+
+        lambday = Lky / (iy * 10)
+        lambdaz = Lkz / (iz * 10)
+
+        esbLim = calcularEsbLim(claseAcero)
+
+        curvaY = calcularCurvaPandeoY(claseAcero)
+        curvaZ = calcularCurvaPandeoZ(claseAcero)
+
+        lambdaRedy = lambday / esbLim
+        lambdaRedz = lambdaz / esbLim
+
+        xy = calcularXy(curvaY, lambdaRedy)
+        xz = calcularXz(curvaZ, lambdaRedz)
+
+        Nbrdy = resN * xy
+        Nbrdz = resN * xz
+        interacy = Ned / Nbrdy
+        interacz = Ned / Nbrdz
+        
+        Kyy = calcularKyy(Cmy, Nbrdy, Ned, lambdaRedy, fCompr)
+        Kzz = calcularKzz(Cmz, Nbrdz, Ned, lambdaRedz, fCompr)
+        Kyz = calcularKyz(Kzz, fCompr)
+        Kzy = calcularKzy(CmLT, Nbrdz, Ned, lambdaRedz, fCompr)
+
+        interacFinalz = Ned / Nbrdz + Kzy * Myed / MbRd + Kzz * Mzed / resMz
+        interacFinaly = Ned / Nbrdy + Kyy * Myed / MbRd + Kyz * Mzed / resMz
+
+
+        interacCTE = round(interacCTE, 2)
+        interacEC3 = round(interacEC3, 2)
+        interacy = round(interacy, 2)
+        interacz = round(interacz, 2)
+        interacPL = round(interacPL, 2)
+        interacFinalz = round(interacFinalz, 2)
+        interacFinaly = round(interacFinaly, 2)
+        Kyy = round(Kyy, 2)
+        Kzz = round(Kzz, 2)
+        Kyz = round(Kyz, 2)
+        Kzy = round(Kzy, 2)
+
+        response_object['message'] ='Data added!'
+        return jsonify({'interacCTE' : interacCTE, 'interacEC3' : interacEC3, 'interacy' : interacy, 'interacz' : interacz, 'interacPL' : interacPL, 
+        'interacFinalz' : interacFinalz, 'interacFinaly' : interacFinaly, 'Kyy' : Kyy, 'Kyz' : Kyz, 'Kzy' : Kzy, 'Kzz' : Kzz})
     else:
         
         response_object = {'status':'success'}

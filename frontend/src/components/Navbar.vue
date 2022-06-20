@@ -4,6 +4,7 @@
       <a href="/">Calculo Resistencias</a>
       <a href="PandeoLateral">Pandeo Lateral</a>
       <a href="PandeoCompresion">Pandeo de barras a compresión</a>
+      <a href="Interaccion">Interacción de esfuerzos en barra</a>
     </div>
   </div>
 </template>
