@@ -1,8 +1,6 @@
-from email import header
 from flask import Flask, render_template, url_for, request, redirect, json, jsonify, Blueprint
 from flask_cors import CORS, cross_origin
 import pandas as pd
-from PIL import Image
 
 #2 -> IPE 240 - IPE 400 HE 280 A -> HE 300 A 
 def calcularResN(Fyd, a):
@@ -46,7 +44,7 @@ def calcularEsbLim(claseAcero):
         return 67.9
 
 def calcularCurvaPandeoY(claseAcero, hdb):
-    if claseAcero == 'S450':
+    if claseAcero == 'S450' or claseAcero == 'S460':
         if hdb >1.2:
             return "a0"
         else:
@@ -58,7 +56,7 @@ def calcularCurvaPandeoY(claseAcero, hdb):
             return "b"
 
 def calcularCurvaPandeoZ(claseAcero, hdb):
-    if claseAcero == 'S450':
+    if claseAcero == 'S450' or claseAcero == 'S460':
         if hdb >1.2:
             return "a0"
         else:
@@ -174,7 +172,6 @@ app = Flask(__name__)
 Cors = CORS(app)
 CORS(app, resources={r'/*': {'origins': 'http://localhost'}},CORS_SUPPORTS_CREDENTIALS = True)
 app.config['CORS_HEADERS'] = 'Content-Type'
-#CORS_ORIGIN_ALLOW_ALL = True
 
 @cross_origin
 @app.route("/data", methods=['GET'])
@@ -384,10 +381,13 @@ def getPandeoLateral():
 
         resMy = calcularResMy(fCompr, Wel, Wpl, Fyd)
 
+        Laux = L * 1000
         #Calculamos MLTw MLTv y MCR
         Mltw = Wel * 1000.0 * (3.1416**2) * E / (Lc * 100.0 / iz)**2 * C1 / 1000000.0
         Mltv = (G * E * It * 10000 * Iz * 10000)**0.5 * 3.1416 * C1 / Lc / 1000000000
-        Mcr = ((Mltw**2 + Mltv**2))**0.5 * k2
+        parte1 = C1 * 3.1416/Laux * (E * (Iz * 10000) * G * (It*10000))**0.5
+        parte2 = (1 + 3.1416**2 * E * (Iw*1000000000) / ((Laux)**2 * G * (It*10000)))**0.5
+        Mcr = parte1 * parte2 /1000000 * k2
         Esblt = (resMy * coeficiente / Mcr)**0.5
         fi = 0.5 * (1 + alfaLT*(Esblt - 0.2) + Esblt**2)
         xlt = calcularXLT(fi, Esblt)
@@ -541,6 +541,7 @@ def getInteraccion():
         tf = df_TipoAcero.iloc[0][6]
         tw = df_TipoAcero.iloc[0][5]
         h = df_TipoAcero.iloc[0][3]
+        Iw = df_TipoAcero.iloc[0][30]
         
         Fyd = calcularFyD(claseAcero, coeficiente)
         alfaLT = 0
@@ -596,9 +597,12 @@ def getInteraccion():
         else:
             alfaLT = 0.21
         #Calculamos MLTw MLTv y MCR
+        Laux = Lc * 1000
         Mltw = Wel * 1000.0 * (3.1416**2) * E / (Lc * 100.0 / iz)**2 * C1 / 1000000.0
         Mltv = (G * E * It * 10000 * Iz * 10000)**0.5 * 3.1416 * C1 / Lc / 1000000000
-        Mcr = ((Mltw**2 + Mltv**2))**0.5 * k2
+        parte1 = C1 * 3.1416/Laux * (E * (Iz * 10000) * G * (It*10000))**0.5
+        parte2 = (1 + 3.1416**2 * E * (Iw*1000000000) / ((Laux)**2 * G * (It*10000)))**0.5
+        Mcr = parte1 * parte2 /1000000 * k2
         Esblt = (resMy * coeficiente / Mcr)**0.5
         fi = 0.5 * (1 + alfaLT*(Esblt - 0.2) + Esblt**2)
         xlt = calcularXLT(fi, Esblt)

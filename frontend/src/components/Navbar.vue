@@ -15,7 +15,7 @@ export default {
 </script>
 <style scoped>
 .navbar {
-  background: grey;
+  background: lightskyblue;
   padding: 1rem;
   font-size: 1.5rem;
 }

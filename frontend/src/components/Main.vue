@@ -1,8 +1,8 @@
 <template>
   <div id="app" style="margin-top: 0px; margin-bottom: 0px;">
     <div class = "superior">
-    <h3 style="margin-bottom: 0px;">Calculo de resistencias en tipos de acero</h3>
     <div class="supizq">
+      <h4 style="margin-bottom: 10%; margin-left:30%;">Introducir Datos:</h4>
       <form v-show="!informacionIntroducida">
         <p>Selección del tipo de acero y coeficiente:</p>
         <select v-model="selected.tipoAcero">
@@ -140,7 +140,7 @@
       </button>
     </div>
     <div class="formulas">
-      <h4>Formulas:</h4>
+      <h4>Fórmulas:</h4>
       <img
         id="imagenPaso3"
         src='../assets/TablaPerfiles.png'
@@ -163,13 +163,13 @@
         id="imagenPaso1"
         src='../assets/VistaRes/CalcularResMy1.1.png'
         v-if="this.paso===2 || this.paso ===3"
-        class="imagen"
+        class="imagen2"
       />
       <img
         id="imagenPaso5"
         src='../assets/VistaRes/InteraccionEC3.png'
         v-if="this.paso===5 && this.selected.clase !=='3'"
-        class="imagen2"
+        class="imagen"
       />
       <img
         id="imagenPaso1"
@@ -184,23 +184,24 @@
         class="imagen"
       />
       <br>
+      <br>
       <img
         id="imagenPaso0"
         src='../assets/CalculoFyD.png'
         v-show="pantallaInicial"
-        class="imagen"
+        class="imagen2"
       />
       <img
         id="imagenPaso0"
         src='../assets/VistaRes/CalcularResN.png'
-        v-if="hover0 && this.paso!==1 || this.paso===1"
+        v-if="this.paso===1"
         class="imagen"
       />
       <img
         id="imagenPaso0"
         src='../assets/VistaRes/CalcularResN2.png'
         v-if="this.paso===1"
-        class="imagen"
+        class="imagen2"
       />
       <img
         id="imagenPaso1"
@@ -218,13 +219,13 @@
         id="imagenPaso1"
         src='../assets/VistaRes/CalcularResMy2.2.png'
         v-if="this.paso===2 || this.paso ===3"
-        class="imagen"
+        class="imagen2"
       />
       <img
         id="imagenPaso4"
         src='../assets/VistaRes/InteraccionCTE.png'
         v-if="this.paso===4 || this.selected.clase ==='3' && this.paso===5"
-        class="imagen2"
+        class="imagen"
       />
       <img
         id="imagenPaso5"
@@ -254,7 +255,7 @@
         id="imagenPaso5"
         src='../assets/VistaRes/InteraccionEC3.4.png'
         v-if="this.paso===5 && this.selected.clase !=='3'"
-        class="imagen2"
+        class="imagen"
       />
       <img
         id="imagenPaso6"
@@ -263,14 +264,15 @@
         class="imagen"
       />
       <br>
+      <br>
       <img
         id="imagenPaso1"
         src='../assets/VistaRes/CalcularVy2.png'
         v-if="this.paso === 6 || this.paso === 7"
-        class="imagen"
       />
     </div>
     <div class="centro">
+      <h3 style="margin-bottom: 5px; text-align: center; margin-top: 7px;" >Calculo de resistencias en tipos de acero</h3>
       <h4 class="titulo">Desarrollo paso a paso</h4>
       {{ nextPaso["texto"] }}
       {{ nextPaso["resultado0"] }}
@@ -301,36 +303,36 @@
       <table class="table" id="tablaContenido">
         <thead>
           <tr>
-            <th></th>
-            <th @mouseover="hover0=true" @mouseleave="hover0 = false">N (kN)</th>
-            <th @mouseover="hover1=true" @mouseleave="hover1 = false">My (kNm)</th>
-            <th @mouseover="hover2=true" @mouseleave="hover2 = false">Mz (kNm)</th>
-            <th @mouseover="hover3=true" @mouseleave="hover3 = false">Interaccion CTE</th>
-            <th @mouseover="hover4=true" @mouseleave="hover4 = false">Interaccion EC-3</th>
-            <th @mouseover="hover5=true" @mouseleave="hover5 = false">Vy (kN)</th>
-            <th @mouseover="hover6=true" @mouseleave="hover6 = false">Vz (kN)</th>
+            <th>{{selected.name}}</th>
+            <th>N (kN)</th>
+            <th>My (kN m)</th>
+            <th>Mz (kN m)</th>
+            <th>Interaccion CTE</th>
+            <th>Interaccion EC-3</th>
+            <th>Vy (kN)</th>
+            <th>Vz (kN)</th>
           </tr>
         </thead>
         <tbody>
           <tr>
-            <td>Ed=</td>
+            <td>Ed</td>
             <td>{{ selected.resN }}</td>
             <td>{{ selected.resMy }}</td>
             <td>{{ selected.resMz }}</td>
-            <td>{{ resistencias[5] }}</td>
-            <td>{{ resistencias[6] }}</td>
+            <td v-bind:style="1 < resistencias[5] ? 'color: red':'' ">{{ resistencias[5] }}</td>
+            <td v-bind:style="1 < resistencias[6] ? 'color: red':'' ">{{ resistencias[6] }}</td>
             <td>{{ selected.resVy }}</td>
             <td>{{ selected.resVz }}</td>
           </tr>
           <tr>
             <td>Rd</td>
-            <td>{{ resistencias[0] }}</td>
-            <td>{{ resistencias[1] }}</td>
-            <td>{{ resistencias[2] }}</td>
+            <td v-bind:style="selected.resN > resistencias[0] ? 'color: red':'' ">{{ resistencias[0] }}</td>
+            <td v-bind:style="selected.resMy > resistencias[1] ? 'color: red':'' ">{{ resistencias[1] }}</td>
+            <td v-bind:style="selected.resMz > resistencias[2] ? 'color: red':'' ">{{ resistencias[2] }}</td>
             <td></td>
             <td></td>
-            <td>{{ resistencias[3] }}</td>
-            <td>{{ resistencias[4] }}</td>
+            <td v-bind:style="selected.resVy > resistencias[3] ? 'color: red':'' ">{{ resistencias[3] }}</td>
+            <td v-bind:style="selected.resVz > resistencias[4] ? 'color: red':'' ">{{ resistencias[4] }}</td>
           </tr>
           <tr>
             <td>Clase</td>
@@ -340,7 +342,7 @@
             <td>{{ selected.clase }}</td>
             <td></td>
             <td>Interaccion V:</td>
-            <td>{{ resistencias[8] }}</td>
+            <td v-bind:style="1 < resistencias[8] ? 'color: red':'' ">{{ resistencias[8] }}</td>
           </tr>
         </tbody>
       </table>
@@ -373,13 +375,6 @@ export default {
       excel2: {},
       excel3: {},
       nextPaso: [],
-      hover0: false,
-      hover1: false,
-      hover2: false,
-      hover3: false,
-      hover4: false,
-      hover5: false,
-      hover6: false,
       paso: 0,
       informacionIntroducida: false,
       ocultar: false,
@@ -521,7 +516,7 @@ export default {
           this.ocultar2 = false
           break
         case 1:
-          this.nextPaso['resultado0'] = 'Resistencia a flexión en el eje y = ' + this.resistencias[1] + 'kN.'
+          this.nextPaso['resultado0'] = 'Resistencia a flexión en el eje y = ' + this.resistencias[1] + 'kN m.'
           this.nextPaso['texto'] = 'Paso 2 Calculo de resistencia a flexión en el eje y: \n\n' +
           'En este caso, disponemos de dos formulas para calcular la resistencia. La superior para las clases 1 y 2, y la inferior para la clase 3.\n' +
           'En esta ejecución, nuestra clase es: ' + this.selected.clase + ', por lo que usamos la formula correspondiente.\n' +
@@ -530,7 +525,7 @@ export default {
           this.ocultar2 = true
           break
         case 2:
-          this.nextPaso['resultado0'] = 'Resistencia a flexión en el eje z = ' + this.resistencias[2] + 'kN.'
+          this.nextPaso['resultado0'] = 'Resistencia a flexión en el eje z = ' + this.resistencias[2] + 'kN m.'
           this.nextPaso['texto'] = 'Paso 3 Calculo de resistencia a flexión en el eje z: \n\n' +
           'Como en el paso anterior, disponemos de dos formulas para calcular la resistencia. La superior para las clases 1 y 2, y la inferior para la clase 3.\n' +
           'En esta ejecución, nuestra clase es: ' + this.selected.clase + ', por lo que usamos la formula correspondiente.\n' +
@@ -611,21 +606,30 @@ export default {
     margin-left: auto;
     margin-right: auto;
     border-spacing:1cm;
-    border: 1px solid;
+    border: 2px solid;
+    border-color: #4040ff;
+    background-color: aliceblue;
 }
 .supizq{
     float: left;
     width: 25%;
     text-align: left;
     margin-left: 30px;
-    height: 550px;
+    height: 570px;
     background-color: aliceblue;
+    border-color: #4040ff;
+    border-right-width: 2px;
+    border-top-width: 0px;
+    border-left-width: 0px;
+    border-bottom-width: 0px;
+    border-style: outset;
+    margin-bottom: 0px;
+    margin-top: 0px;
 }
 .abajo{
-  margin-top: 0%;
   float: left;
   width: 100%;
-  background-color: aliceblue;
+  height: 300px;
 }
 .titulo{
   text-align: center;
@@ -633,7 +637,7 @@ export default {
   margin-bottom: 0px;
 }
 .imagen{
-  width: 40%;
+  width: 50%;
   height: auto;
   float: center;
 }
@@ -643,7 +647,7 @@ export default {
   float: center;
 }
 .imagen3{
-  width: 10%;
+  width: 20%;
   height: auto;
   float: right;
 }
@@ -652,18 +656,24 @@ export default {
   background-color: aliceblue;
   text-align:center;
   height: 550px;
-  margin: 10px;
+  width:41%;
+  margin-left: 28%;
   text-align: justify;
 }
 .formulas{
   width: 30%;
-  height: 550px;
+  height: 570px;
   background-color: aliceblue;
   float: right;
+  border-color: #4040ff;
+  border-right-width: 0px;
+  border-top-width: 0px;
+  border-left-width: 2px;
+  border-bottom-width: 0px;
+  border-style: outset;
 }
 .tablaPerfiles{
-  max-height: 88%;
-  max-width: auto;
+  width: 65%;
   margin-top: 0px;
   float: center;
 }
@@ -673,6 +683,10 @@ export default {
 }
 .superior{
   background-color:aliceblue;
-  height: 550px;
+  height: 570px;
+  border-color: #5564eb;
+  border-width: 2px;
+  border-style: ridge;
+  margin-top: 10px;
 }
 </style>

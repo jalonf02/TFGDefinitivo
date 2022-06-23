@@ -161,22 +161,22 @@
       <table class="table" id="tablaContenido">
         <thead>
           <tr>
-            <th></th>
-            <th @mouseover="hover0 = true" @mouseleave="hover0 = false">
+            <th>{{selected.name}}</th>
+            <th>
               Lₖ (mm)
             </th>
-            <th @mouseover="hover1 = true" @mouseleave="hover1 = false">
+            <th>
               λmecanica
             </th>
-            <th @mouseover="hover2 = true" @mouseleave="hover2 = false">
+            <th>
               λreducida
             </th>
             <th>curva</th>
-            <th @mouseover="hover4 = true" @mouseleave="hover4 = false">χ</th>
-            <th @mouseover="hover5 = true" @mouseleave="hover5 = false">
-              Nb,Rd
+            <th>χ</th>
+            <th>
+              Nb,Rd (kN)
             </th>
-            <th @mouseover="hover6 = true" @mouseleave="hover6 = false">
+            <th>
               interac.
             </th>
           </tr>
@@ -190,7 +190,7 @@
             <td>{{ pandeo[6] }}</td>
             <td>{{ pandeo[8] }}</td>
             <td>{{ pandeo[10] }}</td>
-            <td>{{ pandeo[12] }}</td>
+            <td v-bind:style="1 < pandeo[12] ? 'color: red':'' ">{{ pandeo[12] }}</td>
           </tr>
           <tr>
             <td>Eje Z</td>
@@ -200,7 +200,7 @@
             <td>{{ pandeo[7] }}</td>
             <td>{{ pandeo[9] }}</td>
             <td>{{ pandeo[11] }}</td>
-            <td>{{ pandeo[13] }}</td>
+            <td v-bind:style="1 < pandeo[13] ? 'color: red':'' ">{{ pandeo[13] }}</td>
           </tr>
         </tbody>
       </table>
@@ -223,12 +223,6 @@ export default{
         By: '',
         Bz: ''
       },
-      hover0: false,
-      hover1: false,
-      hover2: false,
-      hover4: false,
-      hover5: false,
-      hover6: false,
       imagen: '',
       pandeo: [],
       excel: {},

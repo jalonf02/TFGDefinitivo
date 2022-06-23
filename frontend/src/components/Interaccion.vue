@@ -245,36 +245,36 @@
       <table class="table" id="tablaContenido">
         <thead>
           <tr>
-            <th></th>
-            <th @mouseover="hover0 = true" @mouseleave="hover0 = false">
-              interac. CTE
+            <th>{{selected.name}}</th>
+            <th>
+              interac. secciones CTE
             </th>
-            <th @mouseover="hover1 = true" @mouseleave="hover1 = false">
-              interac EC3
+            <th>
+              interac. secciones EC3
             </th>
-            <th @mouseover="hover2 = true" @mouseleave="hover2 = false">
+            <th>
               interac. Pandeo y
             </th>
             <th>interac. Pandeo z</th>
-            <th @mouseover="hover4 = true" @mouseleave="hover4 = false">interac. PL</th>
-            <th @mouseover="hover5 = true" @mouseleave="hover5 = false">
-              interac. x
+            <th>interac. PL</th>
+            <th>
+              interac. en barras z
             </th>
-            <th @mouseover="hover6 = true" @mouseleave="hover6 = false">
-              interac. y
+            <th>
+              interac. en barras y
             </th>
           </tr>
         </thead>
         <tbody>
           <tr>
-            <td>Interacciones</td>
-            <td>{{ interaccion['interacCTE'] }}</td>
-            <td>{{ interaccion['interacEC3'] }}</td>
-            <td>{{ interaccion['interacy'] }}</td>
-            <td>{{ interaccion['interacz'] }}</td>
-            <td>{{ interaccion['interacPL'] }}</td>
-            <td>{{ interaccion['interacFinalz'] }}</td>
-            <td>{{ interaccion['interacFinaly'] }}</td>
+            <td>Interacciones (EC3)</td>
+            <td v-bind:style="1 < interaccion['interacCTE'] ? 'color: red':'' ">{{ interaccion['interacCTE'] }}</td>
+            <td v-bind:style="1 < interaccion['interacEC3'] ? 'color: red':'' ">{{ interaccion['interacEC3'] }}</td>
+            <td v-bind:style="1 < interaccion['interacy'] ? 'color: red':'' ">{{ interaccion['interacy'] }}</td>
+            <td v-bind:style="1 < interaccion['interacz'] ? 'color: red':'' ">{{ interaccion['interacz'] }}</td>
+            <td v-bind:style="1 < interaccion['interacPL'] ? 'color: red':'' ">{{ interaccion['interacPL'] }}</td>
+            <td v-bind:style="1 < interaccion['interacFinalz'] ? 'color: red':'' ">{{ interaccion['interacFinalz'] }}</td>
+            <td v-bind:style="1 < interaccion['interacFinaly'] ? 'color: red':'' ">{{ interaccion['interacFinaly'] }}</td>
           </tr>
           <tr>
             <td>Datos</td>
@@ -329,12 +329,6 @@ export default{
         Cmz: '',
         Cmlt: ''
       },
-      hover0: false,
-      hover1: false,
-      hover2: false,
-      hover4: false,
-      hover5: false,
-      hover6: false,
       imagen: '',
       interaccion: [],
       excel: {},
@@ -385,11 +379,11 @@ export default{
       return false
     },
     cambioInformacion2: function () {
-      let aux1 = this.selected.resN.replace(/,/g, '.')
-      let aux2 = this.selected.resMy.replace(/,/g, '.')
-      let aux3 = this.selected.resMz.replace(/,/g, '.')
-      if ((this.selected.resN !== '' && !isNaN(aux1)) && this.selected.clase !== '' && (this.selected.resMy !== '' && !isNaN(aux2)) &&
-      (this.selected.resMz !== '' && !isNaN(aux3))) {
+      let aux1 = this.selected.Ned.replace(/,/g, '.')
+      let aux2 = this.selected.Myed.replace(/,/g, '.')
+      let aux3 = this.selected.Mzed.replace(/,/g, '.')
+      if ((this.selected.Ned !== '' && !isNaN(aux1)) && this.selected.clase !== '' && (this.selected.Myed !== '' && !isNaN(aux2)) &&
+      (this.selected.Mzed !== '' && !isNaN(aux3))) {
         this.informacionIntroducida2 = false
         this.informacionIntroducida3 = true
         this.nextPaso['texto'] = 'Ahora, para el cálculo de pandeo de barras a compresión será necesario añadir los siguientes valores: \n\n' +

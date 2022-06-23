@@ -215,7 +215,7 @@
           <th>Curva</th>
         </tr>
         <tr>
-          <td></td>
+          <td>{{selected.name}}</td>
           <td>{{selected.L}}</td>
           <td>{{selected.Blt}}</td>
           <td>{{ pandeo[8] }}</td>
@@ -247,7 +247,7 @@
           <td>{{ pandeo[4] }}</td>
           <td>{{ pandeo[5] }}</td>
           <td>{{ pandeo[6] }}</td>
-          <td>{{ pandeo[7]}}</td>
+          <td v-bind:style="1 < pandeo[7] ? 'color: red':'' ">{{ pandeo[7]}}</td>
         </tr>
       </tbody>
     </table>
