@@ -1,8 +1,8 @@
 <template>
-  <div id="app" style="margin-top: 0px">
+  <div id="app" style="margin-top: 0px; margin-bottom: 0px;">
     <div class = "superior">
-    <h3 style="margin-bottom: 0px;">Calculo de pandeo lateral</h3>
     <div class="supizq">
+      <h4 style="margin-bottom: 10%; margin-left:30%;">Introducir Datos:</h4>
       <form v-show="!informacionIntroducida">
         <p>Selección del tipo de acero y coeficiente:</p>
         <select v-model="selected.tipoAcero">
@@ -183,7 +183,8 @@
       />
     </div>
     <div class="centro">
-      <h4 class="titulo">Desarrollo paso a paso</h4>
+      <h3 style="margin-bottom: 5px; text-align: center; margin-top: 7px;">Cálculo Pandeo Lateral</h3>
+      <h4 class="titulo">Desarrollo paso a paso:</h4>
       {{ nextPaso["texto"] }}
       {{ nextPaso["resultado0"] }}
       <br/>
@@ -201,6 +202,7 @@
     </div>
     </div>
     <div class="abajo">
+      <p></p>
     <table class="table">
       <thead>
         <tr>
@@ -410,7 +412,7 @@ export default {
         case 0:
           this.nextPaso['resultado0'] = 'Lc = ' + this.pandeo[8] + ' m.'
           this.nextPaso['texto'] = 'Paso 1 Calcular Lc: \n\n' +
-          'Para realizar este cálculo simplemente tenemos que seguir la formula, ya que L y βₗₜ son datos introducidos por el usuario.\n'
+          'Para realizar este cálculo simplemente tenemos que seguir la fórmula, ya que L y βₗₜ son datos introducidos por el usuario.\n\n'
           this.ocultar2 = false
           break
         case 1:
@@ -419,7 +421,7 @@ export default {
           'A continuación, para calcular el momento crítico, ya tenemos todos los datos necesarios.\n\n' +
           'El Lc ha sido calculado en el paso anterior. Además, E y G son datos que vienen dados por el acero y se muestran en la tabla en el apartado de las fórmulas.\n\n' +
           'Por otro lado, C₁ y k₂ vienen dados por el usuario, y el resto de datos son datos propios del perfil ' + this.selected.name +
-          '.\n\nPor lo tanto, ya podemos aplicar la fórmula y calcular.\n'
+          '.\n\nPor lo tanto, ya podemos aplicar la fórmula y obtener el resultado.\n\n'
           this.ocultar2 = true
           break
         case 2:
@@ -441,7 +443,7 @@ export default {
           'Para calcular χ necesitamos Φ. Para ello necesitaremos el coeficiente de imperfección (αLT)  = ' + this.pandeo[11] + '.\n' +
           'Además, necesitaremos la esbeltez adimensional, que se calcula con la fórmula que aparece en la parte derecha.\n\n' +
           'Ahora que hemos calculado la esbeltez adimensional, ya podremos calcular Φ.\n\n' +
-          'Con esto, ya podemos aplicar la fórmula de χlt para calcularlo.'
+          'Con esto, ya podemos aplicar la fórmula de χlt para calcularlo.\n\n'
           break
         case 5:
           this.nextPaso['resultado0'] = 'Mbrd = ' + this.pandeo[6] + ' kNm.'
@@ -454,7 +456,7 @@ export default {
           this.nextPaso['resultado0'] = 'Interacción = ' + this.pandeo[7] + '.'
           this.nextPaso['texto'] = 'Paso 7 Calcular interacción: \n\n' +
           'Una vez tenemos el resultado de Mbrd, simplemente tenemos que seguir la fórmula para hallar la interacción.\n\n' +
-          'De nuevo, se debe comprobar que el resultado sea menor o igual que 1.\n'
+          'De nuevo, se debe comprobar que el resultado sea menor o igual que 1.\n\n'
           this.ocultar = true
           break
         case 7:
@@ -462,7 +464,7 @@ export default {
           this.nextPaso['texto'] = 'Paso 8 Calcular Lc lim: \n\n' +
           'Para realizar este cálculo necesitamos Ned y C1, además del fy que viene dado por el tipo de acero. Son los 3 datos introducidos antes de la ejecución.\n' +
           'El resto de datos, son datos que son obtenidos de la tabla del perfil.\n\n' +
-          'El resultado es una distancia en metros, que sirve para compararla con Lc'
+          'El resultado es una distancia en metros, que sirve para compararla con Lc\n\n'
           this.ocultar = false
           break
       }
@@ -495,21 +497,30 @@ export default {
     margin-left: auto;
     margin-right: auto;
     border-spacing:1cm;
-    border: 1px solid;
+    border: 2px solid;
+    border-color: #4040ff;
+    background-color: aliceblue;
 }
 .supizq{
     float: left;
     width: 25%;
     text-align: left;
     margin-left: 30px;
-    height: 550px;
+    height: 570px;
     background-color: aliceblue;
+    border-color: #4040ff;
+    border-right-width: 2px;
+    border-top-width: 0px;
+    border-left-width: 0px;
+    border-bottom-width: 0px;
+    border-style: outset;
+    margin-bottom: 0px;
+    margin-top: 0px;
 }
 .abajo{
-  margin-top: 0%;
   float: left;
   width: 100%;
-  background-color: aliceblue;
+  height: 300px;
 }
 .titulo{
   text-align: center;
@@ -522,27 +533,38 @@ export default {
   float: center;
 }
 .imagen2{
-  width: 67%;
+  width: 40%;
   height: auto;
   float: center;
+}
+.imagen3{
+  width: 20%;
+  height: auto;
+  float: right;
 }
 .centro{
   white-space:pre-line;
   background-color: aliceblue;
   text-align:center;
   height: 550px;
-  margin: 10px;
+  width:41%;
+  margin-left: 28%;
   text-align: justify;
 }
 .formulas{
   width: 30%;
-  height: 550px;
+  height: 570px;
   background-color: aliceblue;
   float: right;
+  border-color: #4040ff;
+  border-right-width: 0px;
+  border-top-width: 0px;
+  border-left-width: 2px;
+  border-bottom-width: 0px;
+  border-style: outset;
 }
 .tablaPerfiles{
-  max-height: 88%;
-  max-width: auto;
+  width: 65%;
   margin-top: 0px;
   float: center;
 }
@@ -552,7 +574,11 @@ export default {
 }
 .superior{
   background-color:aliceblue;
-  height: 550px;
+  height: 570px;
+  border-color: #5564eb;
+  border-width: 2px;
+  border-style: ridge;
+  margin-top: 10px;
 }
 .curvaPandeo {
   max-width: 85%;

@@ -42,7 +42,7 @@
       </form>
       <p></p>
       <form v-show="informacionIntroducida2">
-        <p>Introduzca Ned y la clase:</p>
+        <p>Introduzca Ned (kN) y la clase:</p>
         <input
           v-bind:style="
             selected.resN < resistencias['Resistencia N'] ? 'color: red' : ''
@@ -56,7 +56,7 @@
           <option>3</option>
           <option>4</option>
         </select>
-        <p>Introduzca Myed y la clase:</p>
+        <p>Introduzca Myed (kN m) y la clase:</p>
         <input
           v-model="selected.resMy"
           placeholder="Resistencia My"
@@ -67,7 +67,7 @@
           <option>3</option>
           <option>4</option>
         </select>
-        <p>Introduzca Mzed y la clase:</p>
+        <p>Introduzca Mzed (kN m) y la clase:</p>
         <input
           v-model="selected.resMz"
           placeholder="Resistencia Mz"
@@ -96,12 +96,12 @@
         </p>
       </form>
       <form v-show="informacionIntroducida3">
-        <p>Introduzca Vyed:</p>
+        <p>Introduzca Vyed (kN):</p>
         <input
           v-model="selected.resVy"
           placeholder="VyEd"
         />
-        <p>Introduzca Vzed:</p>
+        <p>Introduzca Vzed (kN):</p>
         <input
           v-model="selected.resVz"
           placeholder="VzEd"
@@ -272,8 +272,8 @@
       />
     </div>
     <div class="centro">
-      <h3 style="margin-bottom: 5px; text-align: center; margin-top: 7px;" >Calculo de resistencias en tipos de acero</h3>
-      <h4 class="titulo">Desarrollo paso a paso</h4>
+      <h3 style="margin-bottom: 5px; text-align: center; margin-top: 7px;" >Cálculo de resistencias en tipos de acero</h3>
+      <h4 class="titulo">Desarrollo paso a paso:</h4>
       {{ nextPaso["texto"] }}
       {{ nextPaso["resultado0"] }}
       <br/>
@@ -508,7 +508,7 @@ export default {
       switch (this.paso) {
         case 0:
           this.nextPaso['resultado0'] = 'Resistencia a esfuerzo axil = ' + this.resistencias[0] + ' kN.'
-          this.nextPaso['texto'] = 'Paso 1 Calculo de resistencia a esfuerzo axil: \n\n' +
+          this.nextPaso['texto'] = 'Paso 1 Cálculo de resistencia a esfuerzo axil: \n\n' +
           'Para la realización de este cálculo, solo necesitaremos utilizar el Fy obtenido de la clase de acero y su coeficiente. \n' +
           'Además, la A es un valor que obtenemos de la tabla del perfil, que en este caso es: ' + this.selected.name + '\n\n' +
           'Una vez tenemos el resultado, tendríamos que compararlo con el Ned introducido previamente, ya que Ned debe ser menor o igual que dicho resultado.\n' +
@@ -516,27 +516,27 @@ export default {
           this.ocultar2 = false
           break
         case 1:
-          this.nextPaso['resultado0'] = 'Resistencia a flexión en el eje y = ' + this.resistencias[1] + 'kN m.'
-          this.nextPaso['texto'] = 'Paso 2 Calculo de resistencia a flexión en el eje y: \n\n' +
-          'En este caso, disponemos de dos formulas para calcular la resistencia. La superior para las clases 1 y 2, y la inferior para la clase 3.\n' +
-          'En esta ejecución, nuestra clase es: ' + this.selected.clase + ', por lo que usamos la formula correspondiente.\n' +
+          this.nextPaso['resultado0'] = 'Resistencia a flexión en el eje y = ' + this.resistencias[1] + ' kN m.'
+          this.nextPaso['texto'] = 'Paso 2 Cálculo de resistencia a flexión en el eje y: \n\n' +
+          'En este caso, disponemos de dos fórmulas para calcular la resistencia. La superior para las clases 1 y 2, y la inferior para la clase 3.\n' +
+          'En esta ejecución, nuestra clase es: ' + this.selected.clase + ', por lo que usamos la fórmula correspondiente.\n' +
           'La diferencia entre ambas fórmulas es si usamos el W elastico o el W plastico, que ambos son datos obtenidos del perfil.\n\n' +
           'De nuevo, comparamos el resultado con nuestro Myed introducido previamente.\n'
           this.ocultar2 = true
           break
         case 2:
-          this.nextPaso['resultado0'] = 'Resistencia a flexión en el eje z = ' + this.resistencias[2] + 'kN m.'
-          this.nextPaso['texto'] = 'Paso 3 Calculo de resistencia a flexión en el eje z: \n\n' +
-          'Como en el paso anterior, disponemos de dos formulas para calcular la resistencia. La superior para las clases 1 y 2, y la inferior para la clase 3.\n' +
-          'En esta ejecución, nuestra clase es: ' + this.selected.clase + ', por lo que usamos la formula correspondiente.\n' +
+          this.nextPaso['resultado0'] = 'Resistencia a flexión en el eje z = ' + this.resistencias[2] + ' kN m.'
+          this.nextPaso['texto'] = 'Paso 3 Cálculo de resistencia a flexión en el eje z: \n\n' +
+          'Como en el paso anterior, disponemos de dos fórmulas para calcular la resistencia. La superior para las clases 1 y 2, y la inferior para la clase 3.\n' +
+          'En esta ejecución, nuestra clase es: ' + this.selected.clase + ', por lo que usamos la fórmula correspondiente.\n' +
           'La diferencia entre ambas fórmulas es si usamos el W elastico o el W plastico, que ambos son datos obtenidos del perfil.\n\n' +
-          'De nuevo, comparamos el resultado con nuestro Myed introducido previamente.\n'
+          'De nuevo, comparamos el resultado con nuestro Mzed introducido previamente.\n'
           break
         case 3:
           this.nextPaso['resultado0'] = 'La interacción según CTE: ' + this.resistencias[5] + '.'
           this.nextPaso['texto'] = 'Paso 4: Cálculo interacción según CTE\n\n' +
-          'A continuación, veremos como se calcula la interacción. Para ello simplemente tendremos que seguir la formula, ' +
-          'ya que todos los datos se han obtenido en pasos previos.\n'
+          'A continuación, veremos como se calcula la interacción. Para ello simplemente tendremos que seguir la fórmula, ' +
+          'ya que todos los datos se han obtenido en pasos previos o han sido introducidos como datos.\n'
           break
         case 4:
           if (this.selected.clase === '3') {
@@ -555,14 +555,14 @@ export default {
           break
         case 5:
           this.nextPaso['resultado0'] = 'La resistencia esfuerzo cortante para el eje y = ' + this.resistencias[3] + ' kN.'
-          this.nextPaso['texto'] = 'Paso 6 Calculo de resistencia a esfuerzo cortante para el eje y: \n\n' +
+          this.nextPaso['texto'] = 'Paso 6 Cálculo de resistencia a esfuerzo cortante para el eje y: \n\n' +
           'Para la realización de esta fórmula, el único paso previo sería calcular Avy, ya que es el único dato que no obtenemos del perfil.\n' +
           'Una vez hemos calculado Avy, ya podemos utilizar la fórmula y obtener el resultado.\n\n' +
           'Como en el cálculo de las demás resistencias, será necesario realizar la misma comprobación.\n'
           break
         case 6:
           this.nextPaso['resultado0'] = 'La resistencia esfuerzo cortante para el eje z =  ' + this.resistencias[4] + ' kN.'
-          this.nextPaso['texto'] = 'Paso 7 Calculo de resistencia a esfuerzo cortante para el eje z: \n\n' +
+          this.nextPaso['texto'] = 'Paso 7 Cálculo de resistencia a esfuerzo cortante para el eje z: \n\n' +
           'Al contrario que en el eje y, en este caso Avz viene dado por los datos del perfil, por lo que no serían necesarios cálculos previos.\n\n' +
           'Una vez más, se comprueba que este resultado sera mayor o igual que nuestro Vzed dado.\n'
           this.ocultar = true
@@ -573,7 +573,7 @@ export default {
           'Por último, para calcular la interacción en este caso será necesario encontrar p, para así calcular Mvrd.\n' +
           'Una vez obtenemos estos datos, hay que comprobar que Mvrd no sea mayor que Myrd.\n' +
           'Una vez realizada dicha comprobación, podemos aplicar la fórmula y obtener el resultado.\n\n' +
-          'EXCEPCIÓN: Este cálculo no se realizara en caso de que Vzed <= 0.5 * Vzrd. \n'
+          'EXCEPCIÓN: Este cálculo no se realizará en caso de que Vzed <= 0.5 * Vzrd. \n'
           this.ocultar = false
           break
       }

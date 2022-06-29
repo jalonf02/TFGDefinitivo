@@ -1,8 +1,8 @@
 <template>
   <div id="app" style="margin-top: 0px">
     <div class="superior">
-      <h3 style="margin-bottom: 0px;">Calculo de pandeo de barras a compresión</h3>
       <div class="supizq">
+        <h4 style="margin-bottom: 10%; margin-left:30%;">Introducir Datos:</h4>
         <form v-show="!informacionIntroducida">
           <p>Selección del tipo de acero y coeficiente:</p>
           <select v-model="selected.tipoAcero">
@@ -134,7 +134,8 @@
         />
       </div>
       <div class="centro">
-        <h4 class="titulo">Desarrollo paso a paso</h4>
+        <h3 style="margin-bottom: 5px; text-align: center; margin-top: 7px;" >Cálculo de Pandeo de barras a compresión</h3>
+        <h4 class="titulo">Desarrollo paso a paso:</h4>
         {{ nextPaso["texto"] }}
         {{ nextPaso["resultado0"] }}
         {{ nextPaso["resultado1"] }}
@@ -158,6 +159,7 @@
       </div>
     </div>
     <div class="abajo">
+      <p></p>
       <table class="table" id="tablaContenido">
         <thead>
           <tr>
@@ -314,8 +316,7 @@ export default{
         .then(body => {
           this.excel = body.data
           this.nextPaso['texto'] = 'El primer paso seria seleccionar en los desplegables el tipo de acero y su coeficiente.\n\n' +
-          'Además, se deberá indicar con que perfil se desea realizar los cálculos.\n\n' +
-          'Si desea introducir valores decimales utilice el punto en lugar de la coma.'
+          'Además, se deberá indicar con que perfil se desea realizar los cálculos.\n\n'
         })
         .catch(err => {
           console.log(err)
@@ -344,60 +345,60 @@ export default{
         case 0:
           this.nextPaso['resultado0'] = 'Lₖ para el eje y = ' + this.pandeo[0] + ' mm.'
           this.nextPaso['resultado1'] = 'Lₖ para el eje z = ' + this.pandeo[1] + ' mm.'
-          this.nextPaso['texto'] = 'Paso 1: \n\n' +
+          this.nextPaso['texto'] = 'Paso 1 Cálculo Lₖ: \n\n' +
           'Para calcular la resistencia a pandeo necesitaremos realizar diversos cálculos primero. \n' +
           'El primer paso sera calcular el valor de Lₖ en mm para ambos ejes.\n ' +
-          'Para ello, utilizamos la fórmula que se muestra a la derecha, donde se utilizará el coeficiente β elegido para cada eje para calcular su Lₖ correspondiente.\n'
+          'Para ello, utilizamos la fórmula que se muestra a la derecha, donde se utilizará el coeficiente β elegido para cada eje para calcular su Lₖ correspondiente.\n\n'
           this.ocultar2 = false
           break
         case 1:
           this.nextPaso['resultado0'] = 'λmec para el eje y = ' + this.pandeo[2] + '.'
           this.nextPaso['resultado1'] = 'λmec para el eje z = ' + this.pandeo[3] + '.'
-          this.nextPaso['texto'] = 'Paso 2: \n\n' +
+          this.nextPaso['texto'] = 'Paso 2 Cálculo esbeltez mecánica: \n\n' +
           'A continuación, calcularemos el valor de la Esbeltez mecánica.\n\n' +
-          'Para realizar este calculo es necesario el valor de Lₖ, calculado en el paso anterior y el valor i de cada eje, que se obtiene de la tabla del perfil seleccionado.'
+          'Para realizar este calculo es necesario el valor de Lₖ, calculado en el paso anterior y el valor i de cada eje, que se obtiene de la tabla del perfil seleccionado.\n\n'
           this.ocultar2 = true
           break
         case 2:
           this.nextPaso['resultado0'] = 'λreducida para el eje y = ' + this.pandeo[4] + '.'
           this.nextPaso['resultado1'] = 'λreducida para el eje z = ' + this.pandeo[5] + '.'
-          this.nextPaso['texto'] = 'Paso 3: \n\n' +
+          this.nextPaso['texto'] = 'Paso 3 cálculo esbeltez reducida: \n\n' +
           'Una vez hemos calculado la Esbeltez mecánica podemos calcular la esbeltez reducida.\n\n' +
-          'En este caso, sería necesario realizar el cálculo previo de λE. Para ello se utiliza la formula mostrada en la parte inferior.\n' +
-          'Una vez realizamos este calculo, utilizando la formula del apartado de formulas obtendriamos el resultado. ' +
-          'Este resultado tiene que ser menor que 2 en ambos casos, en caso de no serlo, se deben introducir nuevos valores para satisfacer esta condición.'
+          'En este caso, sería necesario realizar el cálculo previo de λE. Para ello se utiliza la fórmula mostrada en la parte inferior.\n' +
+          'Una vez realizamos este calculo, utilizando la fórmula mostrada a la derecha obtendriamos el resultado. ' +
+          'Este resultado tiene que ser menor que 2 en ambos casos, en caso de no serlo, se deben introducir nuevos valores para satisfacer esta condición.\n\n'
           break
         case 3:
           this.nextPaso['resultado0'] = 'La curva de pandeo para el eje y es: ' + this.pandeo[6] + '.'
           this.nextPaso['resultado1'] = 'La curva de pandeo para el eje z es: ' + this.pandeo[7] + '.'
-          this.nextPaso['texto'] = 'Paso 4:\n\n' +
+          this.nextPaso['texto'] = 'Paso 4 curva de pandeo:\n\n' +
           'En caso de que se cumpla la condición previa, ahora se elije la curva de pandeo.\n' +
           'La curva de pandeo depende del tipo de Acero elegido, que en este caso es ' + this.selected['tipoAcero'] +
-          ' por lo que las curvas son las siguientes: \n'
+          ' por lo que las curvas son las siguientes: \n\n'
           break
         case 4:
           this.nextPaso['resultado0'] = 'χ para el eje y = ' + this.pandeo[8] + '.'
           this.nextPaso['resultado1'] = 'χ para el eje z = ' + this.pandeo[9] + '.'
-          this.nextPaso['texto'] = 'Paso 5: \n\n' +
+          this.nextPaso['texto'] = 'Paso 5 Cálculo de χ: \n\n' +
           'Para calcular χ primero necesitamos el coeficiente de imperfección, que viene dado por la tabla inferior.\n' +
-          'Una vez lo tengamos primero hayamos Φ siguiendo la formula, y con esto ya podemos calcular χ para ambos ejes.'
+          'Una vez lo tengamos primero hayamos Φ siguiendo la fórmula, y con esto ya podemos calcular χ para ambos ejes.\n\n'
           break
         case 5:
           this.nextPaso['resultado0'] = 'Nb,Rd para el eje y = ' + this.pandeo[10] + ' kN.'
           this.nextPaso['resultado1'] = 'Nb,Rd para el eje z = ' + this.pandeo[11] + ' kN.'
-          this.nextPaso['texto'] = 'Paso 6: \n\n' +
+          this.nextPaso['texto'] = 'Paso 6 Cálculo de Nb,Rd: \n\n' +
           'Ahora que ya hemos calculado χ podemos calcular la resistencia a pandeo.\n' +
           'Para realizar este calculo, además necesitaremos los datos elegidos al principio, dados por nuestra clase de acero ' + this.selected.tipoAcero +
-          ' y por nuestro coeficiente ' + this.selected.coeficiente + '.'
+          ' y por nuestro coeficiente ' + this.selected.coeficiente + '.\n\n'
           this.ocultar = true
           break
         case 6:
           this.nextPaso['resultado0'] = 'La interacción en el eje y = ' + this.pandeo[12] + '.'
           this.nextPaso['resultado1'] = 'La interacción en el eje z = ' + this.pandeo[13] + '.'
-          this.nextPaso['texto'] = 'Paso 7: \n\n' +
+          this.nextPaso['texto'] = 'Paso 7 Cálculo de interacción: \n\n' +
           'Por último, para calcular la interacción y verificar que todo es correcto necesitamos que el resultado sea menor que 1.\n' +
           'Para esta formula utilizaremos el esfuerzo axil (Ned) ' + this.selected.resNecN + ' kN.\n' +
-          'Con esto podemos calcular la intearacción y verificar que el resultado es correcto.'
+          'Con esto podemos calcular la intearacción y verificar que el resultado es correcto.\n\n'
           this.ocultar = false
           break
       }
@@ -421,30 +422,39 @@ export default{
 </script>
 
 <style scoped>
-.table {
-  font-size: 1rem;
-  margin-left: auto;
-  margin-right: auto;
-  border-spacing: 1.5cm;
-  border: 1px solid;
-}
 .app{
     text-align: center;
     align-content: center;
+}
+.table{
+    font-size: 1rem;
+    margin-left: auto;
+    margin-right: auto;
+    border-spacing:1cm;
+    border: 2px solid;
+    border-color: #4040ff;
+    background-color: aliceblue;
 }
 .supizq{
     float: left;
     width: 25%;
     text-align: left;
     margin-left: 30px;
-    height: 550px;
+    height: 570px;
     background-color: aliceblue;
+    border-color: #4040ff;
+    border-right-width: 2px;
+    border-top-width: 0px;
+    border-left-width: 0px;
+    border-bottom-width: 0px;
+    border-style: outset;
+    margin-bottom: 0px;
+    margin-top: 0px;
 }
 .abajo{
-  margin-top: 0%;
   float: left;
   width: 100%;
-  background-color: aliceblue;
+  height: 300px;
 }
 .titulo{
   text-align: center;
@@ -452,27 +462,43 @@ export default{
   margin-bottom: 0px;
 }
 .imagen{
-  width: 200px;
+  width: 50%;
   height: auto;
-  margin-top: 5%;
   float: center;
+}
+.imagen2{
+  width: 40%;
+  height: auto;
+  float: center;
+}
+.imagen3{
+  width: 20%;
+  height: auto;
+  float: right;
 }
 .centro{
   white-space:pre-line;
   background-color: aliceblue;
   text-align:center;
   height: 550px;
-  margin: 10px;
+  width:41%;
+  margin-left: 28%;
   text-align: justify;
 }
 .formulas{
   width: 30%;
-  height: 550px;
+  height: 570px;
   background-color: aliceblue;
   float: right;
+  border-color: #4040ff;
+  border-right-width: 0px;
+  border-top-width: 0px;
+  border-left-width: 2px;
+  border-bottom-width: 0px;
+  border-style: outset;
 }
 .tablaPerfiles{
-  height: 400px;
+  width: 65%;
   margin-top: 0px;
   float: center;
 }
@@ -482,9 +508,14 @@ export default{
 }
 .superior{
   background-color:aliceblue;
-  height: 550px;
+  height: 570px;
+  border-color: #5564eb;
+  border-width: 2px;
+  border-style: ridge;
+  margin-top: 10px;
 }
 .curvaPandeo {
-  width: 460px;
+  max-width: 85%;
+  max-height: auto;
 }
 </style>

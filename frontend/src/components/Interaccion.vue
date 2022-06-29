@@ -1,8 +1,8 @@
 <template>
   <div id="app" style="margin-top: 0px; margin-bottom: 0px;">
     <div class = "superior">
-    <h3 style="margin-bottom: 0px;">Interaccion de esfuerzos en barra</h3>
     <div class="supizq">
+      <h4 style="margin-bottom: 10%; margin-left:30%;">Introducir Datos:</h4>
       <form v-show="!informacionIntroducida">
         <p>Selección del tipo de acero y coeficiente:</p>
         <select v-model="selected.tipoAcero">
@@ -224,7 +224,8 @@
         />
       </div>
       <div class="centro">
-        <h4 class="titulo">Desarrollo paso a paso</h4>
+      <h3 style="margin-bottom: 5px; text-align: center; margin-top: 7px;" >Interacción de esfuerzos en barra</h3>
+      <h4 class="titulo">Desarrollo paso a paso:</h4>
         {{ nextPaso["texto"] }}
         {{ nextPaso["resultado0"] }}
         {{ nextPaso["resultado1"] }}
@@ -242,6 +243,7 @@
       </div>
     </div>
     <div class="abajo">
+      <p></p>
       <table class="table" id="tablaContenido">
         <thead>
           <tr>
@@ -511,10 +513,10 @@ export default{
           this.nextPaso['texto'] = 'Paso 1.1 Coeficientes K: \n\n' +
           'En este paso calcularemos los coeficientes Kyy y Kzz. \n' +
           'Para ello, necesitaremos saber la clase introducida según la tabla, que en este caso es ' + this.selected.clase + '.\n ' +
-          'Una vez sabemos la clase, podemos seguir las formulas mostradas para hallar Kyy y Kzz.\n\n' +
+          'Una vez sabemos la clase, podemos seguir las fórmulas mostradas para hallar Kyy y Kzz.\n\n' +
           'Ned, Cmy, Cmz y Cmlt son datos introducidos previamente.\n' +
           'Por otro lado, necesitaremos también la esbeltez reducida para ambos ejes y el Nb,rd de ambos ejes también.\n' +
-          'En caso de querer comprobar como se obtienen, puedes regresar al apartado de pandeo por compresión.\n\n'
+          'En caso de querer comprobar como se calcunal, puede regresar al apartado de pandeo por compresión.\n\n'
           this.ocultar2 = false
           break
         case 1:
@@ -523,9 +525,9 @@ export default{
           this.nextPaso['texto'] = 'Paso 1.2 Coeficientes K: \n\n' +
           'En este paso calcularemos los coeficientes Kyz y Kzy. \n' +
           'Para ello, necesitaremos saber la clase introducida según la tabla, que en este caso es ' + this.selected.clase + '.\n ' +
-          'Una vez sabemos la clase, podemos seguir las formulas mostradas para hallar Kyz y Kzy.\n\n' +
+          'Una vez sabemos la clase, podemos seguir las fórmulas mostradas para hallar Kyz y Kzy.\n\n' +
           'Ned, Cmy, Cmz y Cmlt son datos introducidos previamente.\n' +
-          'Por otro lado, necesitaremos también la esbeltez reducida para ambos ejes y el Nb,rd de ambos ejes también.\n' +
+          'Por otro lado, necesitaremos la esbeltez reducida para ambos ejes y el Nb,rd de ambos ejes también.\n' +
           'En caso de querer comprobar como se obtienen, puedes regresar al apartado de pandeo por compresión.\n\n'
           this.ocultar2 = true
           this.ocultar = true
@@ -533,9 +535,9 @@ export default{
         case 2:
           this.nextPaso['resultado1'] = 'Pandeo en el plano debil (x-y) del perfil (eje z) = ' + this.interaccion['interacFinalZ'] + '.'
           this.nextPaso['resultado0'] = 'Pandeo en el plano fuerte (x-z) del perfil (eje y) = ' + this.interaccion['interacFinalY'] + '.'
-          this.nextPaso['texto'] = 'Paso 2 Calculo pandeo en el plano debil y fuerte del perfil: \n\n' +
+          this.nextPaso['texto'] = 'Paso 2 Cálculo pandeo en el plano débil y fuerte del perfil: \n\n' +
           'Una vez hemos calculado todos los coeficientes K, podemos calcular las interacciones.\n\n' +
-          'Para ello, utilizaremos la formula correspondiente.\n' +
+          'Para ello, utilizaremos la fórmula correspondiente.\n' +
           'Los dividendos son datos introducidos en el programa previamente.\n' +
           'Por otro lado, los divisores, son datos que hemos calculado en los otros apartados, para ver su paso a paso compruebe en el apartado respectivo.\n\n' +
           'El Nb,Rd lo hayamos en el pandeo lateral, y el Nb,Rd para cada eje es calculado en el pandeo por compresion.\n' +
@@ -571,22 +573,31 @@ export default{
     font-size: 1rem;
     margin-left: auto;
     margin-right: auto;
-    border-spacing:1.2cm;
-    border: 1px solid;
+    border-spacing:1cm;
+    border: 2px solid;
+    border-color: #4040ff;
+    background-color: aliceblue;
 }
 .supizq{
     float: left;
     width: 25%;
     text-align: left;
     margin-left: 30px;
-    height: 550px;
+    height: 570px;
     background-color: aliceblue;
+    border-color: #4040ff;
+    border-right-width: 2px;
+    border-top-width: 0px;
+    border-left-width: 0px;
+    border-bottom-width: 0px;
+    border-style: outset;
+    margin-bottom: 0px;
+    margin-top: 0px;
 }
 .abajo{
-  margin-top: 0%;
   float: left;
   width: 100%;
-  background-color: aliceblue;
+  height: 300px;
 }
 .titulo{
   text-align: center;
@@ -594,45 +605,38 @@ export default{
   margin-bottom: 0px;
 }
 .imagen{
-  width: 60%;
+  width: 50%;
   height: auto;
-  margin-top: 5%;
   float: center;
 }
 .imagen2{
-  width: 60%;
+  width: 40%;
   height: auto;
-  margin-top: 5%;
   float: center;
-}
-.imagen3{
-  width: 60%;
-  height: auto;
-  float: right;
 }
 .centro{
   white-space:pre-line;
   background-color: aliceblue;
   text-align:center;
   height: 550px;
-  margin: 10px;
+  width:41%;
+  margin-left: 28%;
   text-align: justify;
 }
 .formulas{
   width: 30%;
-  height: 550px;
+  height: 570px;
   background-color: aliceblue;
   float: right;
+  border-color: #4040ff;
+  border-right-width: 0px;
+  border-top-width: 0px;
+  border-left-width: 2px;
+  border-bottom-width: 0px;
+  border-style: outset;
 }
 .tablaPerfiles{
-  max-height: 88%;
-  max-width: auto;
-  margin-top: 0px;
-  float: center;
-}
-.coeficientesK{
-  max-width: 94%;
-  max-width: auto;
+  width: 65%;
   margin-top: 0px;
   float: center;
 }
@@ -642,6 +646,21 @@ export default{
 }
 .superior{
   background-color:aliceblue;
-  height: 550px;
+  height: 570px;
+  border-color: #5564eb;
+  border-width: 2px;
+  border-style: ridge;
+  margin-top: 10px;
+}
+.imagen3{
+  width: 60%;
+  height: auto;
+  float: right;
+}
+.coeficientesK{
+  max-width: 94%;
+  max-width: auto;
+  margin-top: 0px;
+  float: center;
 }
 </style>
